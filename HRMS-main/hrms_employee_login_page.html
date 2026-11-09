@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HRMS — Sign In</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:wght@500;600&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --ink: #0f1923;
+      --ink-mid: #3a4a58;
+      --ink-light: #8a97a4;
+      --accent: #0a6b6e;
+      --accent-bright: #0d9298;
+      --accent-glow: rgba(13, 146, 152, 0.18);
+      --surface: #ffffff;
+      --surface-dim: #f4f6f8;
+      --border: #dde3ea;
+      --panel: #0d1e27;
+      --panel-mid: #122533;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(13, 146, 152, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(10, 107, 110, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* ── Shell ── */
+    .shell {
+      width: min(980px, 100%);
+      display: grid;
+      grid-template-columns: minmax(0, 420px) 1fr;
+      min-height: 620px;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow:
+        0 2px 0 rgba(255, 255, 255, 0.8) inset,
+        0 60px 120px -20px rgba(10, 30, 40, 0.22),
+        0 0 0 1px rgba(0, 0, 0, 0.06);
+      animation: shellIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes shellIn {
+      from {
+        opacity: 0;
+        transform: translateY(28px) scale(0.97);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* ── LEFT PANEL ── */
+    .panel {
+      background: var(--panel);
+      padding: 40px 48px 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(13, 146, 152, 0.20) 0%, transparent 70%);
+      bottom: -80px;
+      right: -80px;
+      pointer-events: none;
+    }
+
+    .panel::after {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(13, 146, 152, 0.12) 0%, transparent 70%);
+      top: 60px;
+      right: 20px;
+      pointer-events: none;
+    }
+
+    .panel-grid {
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(-45deg,
+          rgba(255, 255, 255, 0.018) 0px,
+          rgba(255, 255, 255, 0.018) 1px,
+          transparent 1px,
+          transparent 28px);
+      pointer-events: none;
+    }
+
+    /* ── Back to Home ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 12px;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+      width: fit-content;
+      transition: color 0.22s;
+      margin-bottom: 32px;
+    }
+
+    .back-link .back-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      transition: border-color 0.22s, background 0.22s, transform 0.22s;
+    }
+
+    .back-link:hover {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .back-link:hover .back-icon {
+      border-color: rgba(13, 146, 152, 0.5);
+      background: rgba(13, 146, 152, 0.12);
+      transform: translateX(-2px);
+    }
+
+    .brand {
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(13, 146, 152, 0.12);
+      border: 1px solid rgba(13, 146, 152, 0.3);
+      border-radius: 10px;
+      padding: 8px 14px;
+      margin-bottom: 24px;
+    }
+
+    .brand-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-bright);
+      box-shadow: 0 0 8px var(--accent-bright);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 6px var(--accent-bright);
+      }
+
+      50% {
+        opacity: 0.6;
+        box-shadow: 0 0 14px var(--accent-bright);
+      }
+    }
+
+    .brand-badge span {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-bright);
+    }
+
+    .brand-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 38px;
+      font-weight: 600;
+      color: #ffffff;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-title span {
+      color: var(--accent-bright);
+    }
+
+    .brand-sub {
+      margin-top: 16px;
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.45);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ── STATS ── */
+    .stats {
+      display: flex;
+      gap: 12px;
+      margin-top: 36px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-card {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 16px 14px;
+      transition: background 0.25s, border-color 0.25s;
+      cursor: default;
+    }
+
+    .stat-card:hover {
+      background: rgba(13, 146, 152, 0.1);
+      border-color: rgba(13, 146, 152, 0.3);
+    }
+
+    .stat-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: rgba(13, 146, 152, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .stat-icon i {
+      font-size: 13px;
+      color: var(--accent-bright);
+    }
+
+    .stat-num {
+      font-size: 22px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .stat-lbl {
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.35);
+      margin-top: 4px;
+    }
+
+    /* ── Testimonial ── */
+    .testimonial {
+      position: relative;
+      z-index: 1;
+      margin-top: auto;
+      padding-top: 36px;
+    }
+
+    .testi-text {
+      font-size: 12.5px;
+      color: rgba(255, 255, 255, 0.38);
+      font-style: italic;
+      line-height: 1.7;
+    }
+
+    .testi-author {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .testi-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #023a3c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .testi-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── RIGHT FORM SIDE ── */
+    .form-side {
+      background: var(--surface);
+      padding: 60px 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .form-side::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12%;
+      bottom: 12%;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--border) 40%, var(--border) 60%, transparent);
+    }
+
+    .form-header {
+      margin-bottom: 38px;
+    }
+
+    .form-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .eyebrow-line {
+      width: 22px;
+      height: 2px;
+      background: var(--accent-bright);
+      border-radius: 2px;
+    }
+
+    .eyebrow-text {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-bright);
+    }
+
+    .form-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 30px;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .form-subtitle {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--ink-light);
+      font-weight: 400;
+    }
+
+    /* ── INPUTS ── */
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap i {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--ink-light);
+      transition: color 0.2s;
+    }
+
+    .input-wrap:focus-within i {
+      color: var(--accent-bright);
+    }
+
+    .input-wrap input {
+      width: 100%;
+      padding: 15px 18px 15px 46px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface-dim);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .input-wrap input::placeholder {
+      color: #b2bcc5;
+    }
+
+    .input-wrap input:focus {
+      border-color: var(--accent-bright);
+      background: #fff;
+      box-shadow: 0 0 0 4px var(--accent-glow);
+    }
+
+    .eye-btn {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--ink-light);
+      font-size: 13px;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+
+    .eye-btn:hover {
+      color: var(--accent-bright);
+    }
+
+    /* ── REMEMBER / FORGOT ── */
+    .meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .remember input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent-bright);
+      cursor: pointer;
+    }
+
+    .remember-lbl {
+      font-size: 12.5px;
+      color: var(--ink-light);
+      user-select: none;
+    }
+
+    .forgot {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .forgot:hover {
+      color: var(--accent-bright);
+    }
+
+    /* ── SUBMIT ── */
+    .btn-login {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #0d9298 0%, #0a6b6e 100%);
+      border: none;
+      border-radius: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: #fff;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 24px rgba(13, 146, 152, 0.28);
+    }
+
+    .btn-login::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(13, 146, 152, 0.38);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .btn-login .btn-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-arrow {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      transition: transform 0.25s;
+    }
+
+    .btn-login:hover .btn-arrow {
+      transform: translateX(3px);
+    }
+
+    /* ── Divider & SSO ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .divider-text {
+      font-size: 11px;
+      color: var(--ink-light);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .sso-btn {
+      width: 100%;
+      padding: 13px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-mid);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+
+    .sso-btn:hover {
+      border-color: var(--accent-bright);
+      background: var(--surface-dim);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .sso-icon {
+      font-size: 15px;
+      color: var(--accent-bright);
+    }
+
+    /* ── Footer note ── */
+    .form-footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--ink-light);
+      line-height: 1.6;
+    }
+
+    .form-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .form-footer a:hover {
+      color: var(--accent-bright);
+    }
+
+    /* ── RESPONSIVE: Tablet (≤860px) ── */
+    @media (max-width: 860px) {
+      .shell {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        border-radius: 22px;
+        width: 100%;
+      }
+
+      .panel {
+        padding: 32px 32px 32px;
+        min-height: auto;
+      }
+
+      .brand-title {
+        font-size: 30px;
+      }
+
+      .stats {
+        margin-top: 24px;
+      }
+
+      .testimonial {
+        display: none;
+      }
+
+      .form-side {
+        padding: 40px 36px 44px;
+      }
+
+      .form-side::before {
+        display: none;
+      }
+    }
+
+    /* ── RESPONSIVE: Mobile (≤560px) ── */
+    @media (max-width: 560px) {
+      body {
+        padding: 12px;
+        align-items: flex-start;
+      }
+
+      .shell {
+        border-radius: 18px;
+        box-shadow: 0 20px 60px -10px rgba(10, 30, 40, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.06);
+      }
+
+      .panel {
+        padding: 24px 20px 28px;
+      }
+
+      .back-link {
+        font-size: 11.5px;
+        margin-bottom: 20px;
+      }
+
+      .brand-badge {
+        padding: 6px 12px;
+        margin-bottom: 16px;
+      }
+
+      .brand-badge span {
+        font-size: 10px;
+      }
+
+      .brand-title {
+        font-size: 26px;
+      }
+
+      .brand-sub {
+        font-size: 12.5px;
+        margin-top: 10px;
+      }
+
+      .stats {
+        gap: 8px;
+        margin-top: 20px;
+      }
+
+      .stat-card {
+        padding: 12px 10px;
+        border-radius: 12px;
+      }
+
+      .stat-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+      }
+
+      .stat-num {
+        font-size: 18px;
+      }
+
+      .stat-lbl {
+        font-size: 9.5px;
+      }
+
+      .form-side {
+        padding: 32px 22px 36px;
+      }
+
+      .form-title {
+        font-size: 26px;
+      }
+
+      .form-subtitle {
+        font-size: 12.5px;
+      }
+
+      .form-header {
+        margin-bottom: 28px;
+      }
+
+      .field {
+        margin-bottom: 16px;
+      }
+
+      .field-label {
+        font-size: 11px;
+      }
+
+      .input-wrap input {
+        padding: 13px 14px 13px 42px;
+        font-size: 14px;
+        border-radius: 12px;
+      }
+
+      .btn-login {
+        padding: 14px;
+        border-radius: 12px;
+        font-size: 13.5px;
+      }
+
+      .sso-btn {
+        padding: 12px;
+        border-radius: 12px;
+        font-size: 12.5px;
+      }
+
+      .meta {
+        margin-bottom: 22px;
+      }
+
+      .remember-lbl,
+      .forgot {
+        font-size: 12px;
+      }
+
+      .divider {
+        margin: 18px 0;
+      }
+
+      .form-footer {
+        font-size: 10.5px;
+        margin-top: 22px;
+      }
+    }
+
+    /* ── RESPONSIVE: Very small (≤380px) ── */
+    @media (max-width: 380px) {
+      body {
+        padding: 8px;
+      }
+
+      .panel {
+        padding: 20px 14px;
+      }
+
+      .form-side {
+        padding: 26px 18px 30px;
+      }
+
+      .brand-title {
+        font-size: 22px;
+      }
+
+      .stats {
+        flex-wrap: wrap;
+      }
+
+      .stat-card {
+        flex: 1 1 calc(50% - 4px);
+      }
+
+      .stat-card:last-child {
+        flex: 1 1 100%;
+      }
+
+      .form-title {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="shell">
+
+    <!-- ══ LEFT PANEL ══ -->
+    <div class="panel">
+      <div class="panel-grid"></div>
+
+      <a href="hrms_landing_page.html" class="back-link">
+        <span class="back-icon"><i class="fas fa-arrow-left"></i></span>
+        Back to Home
+      </a>
+
+      <div class="brand">
+        <div class="brand-badge">
+          <div class="brand-dot"></div>
+          <span>Employee Login</span>
+        </div>
+
+        <h1 class="brand-title">Human Resource<br><span>Management</span></h1>
+        <p class="brand-sub">A centralised platform for workforce<br>operations, compliance &amp; insights.</p>
+
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-num">1.2k</div>
+            <div class="stat-lbl">Staff</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+            <div class="stat-num">98%</div>
+            <div class="stat-lbl">Attendance</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+            <div class="stat-num">&#8377;4.8M</div>
+            <div class="stat-lbl">Payroll</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial">
+        <p class="testi-text">"Streamlined our entire HR workflow — from onboarding to payroll — in one clean
+          interface."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">SR</div>
+          <span class="testi-name">Srinivas R. &mdash; Head of HR, NovaCorp</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FORM SIDE ══ -->
+    <div class="form-side">
+
+      <div class="form-header">
+        <div class="form-eyebrow">
+          <div class="eyebrow-line"></div>
+          <span class="eyebrow-text">Secure Portal</span>
+        </div>
+        <h2 class="form-title">Welcome back</h2>
+        <p class="form-subtitle">Enter your credentials to access the dashboard</p>
+      </div>
+
+      <form onsubmit="handleLogin(event)">
+
+        <div class="field">
+          <label class="field-label" for="username">Username</label>
+          <div class="input-wrap">
+            <i class="fas fa-user"></i>
+            <input id="username" type="text" placeholder="e.g. john.doe" autocomplete="username">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="password">Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock"></i>
+            <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password">
+            <button type="button" class="eye-btn" onclick="togglePass(this)" aria-label="Show password">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="meta">
+          <label class="remember">
+            <input type="checkbox">
+            <span class="remember-lbl">Stay signed in</span>
+          </label>
+          <a href="hrms_forgot_password.html" class="forgot">Forgot password?</a>
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn-login">
+          <div class="btn-inner">
+            Sign In
+            <div class="btn-arrow"><i class="fas fa-arrow-right"></i></div>
+          </div>
+        </button>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <span class="divider-text">or continue with</span>
+          <div class="divider-line"></div>
+        </div>
+
+        <button type="button" class="sso-btn" onclick="microsoftLogin()">
+          <i class="fab fa-microsoft sso-icon"></i>
+          Sign in with Microsoft SSO
+        </button>
+
+      </form>
+
+      <div class="form-footer">
+        Protected by end-to-end encryption &nbsp;&middot;&nbsp;
+        <a href="hrms_privacy_policy.html">Privacy Policy</a> &nbsp;&middot;&nbsp;
+        <a href="hrms_terms_of_use.html">Terms of Use</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ── Toggle password visibility ── */
+    function microsoftLogin() {
+      window.location.href = "https://login.microsoftonline.com/";
+    }
+    function togglePass(btn) {
+      var input = btn.closest('.input-wrap').querySelector('input');
+      var icon = btn.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    }
+
+    /* ── Login handler ── */
+    function handleLogin(e) {
+      e.preventDefault();
+
+      var username = document.getElementById('username').value.trim();
+      var password = document.getElementById('password').value;
+      var btn = document.getElementById('loginBtn');
+
+      if (!username || !password) {
+        alert('Please enter your username and password.');
+        return;
+      }
+
+      /* Loading state */
+      btn.innerHTML = '<div class="btn-inner"><i class="fas fa-circle-notch fa-spin"></i>&nbsp; Verifying\u2026</div>';
+      btn.disabled = true;
+      btn.style.opacity = '0.82';
+
+      fetch('/api/powerautomate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'loginAuth', payload: { email: username, password: password } })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.status === 'success') {
+
+            /* ✅ Success */
+            btn.innerHTML = '<div class="btn-inner"><i class="fas fa-check"></i>&nbsp; Access Granted!</div>';
+            btn.style.background = 'linear-gradient(135deg,#16a34a,#15803d)';
+            btn.style.boxShadow = '0 5px 18px rgba(22,163,74,0.32)';
+            btn.style.opacity = '1';
+
+            /* Store user email to local storage to fetch SharePoint data on the next page */
+            localStorage.setItem("userEmail", username);
+
+            setTimeout(function () {
+              window.location.href = data.role === 'HR'
+                ? 'dashboard_hr.html'
+                : 'hrms_self_details-page.html';
+            }, 1000);
+
+          } else {
+
+            /* ❌ Invalid credentials */
+            btn.innerHTML = '<div class="btn-inner"><i class="fas fa-times"></i>&nbsp; Invalid Login</div>';
+            btn.style.background = 'linear-gradient(135deg,#dc2626,#991b1b)';
+            btn.style.opacity = '1';
+
+            setTimeout(function () {
+              btn.innerHTML = '<div class="btn-inner">Sign In<div class="btn-arrow"><i class="fas fa-arrow-right"></i></div></div>';
+              btn.style.background = '';
+              btn.style.boxShadow = '';
+              btn.disabled = false;
+              btn.style.opacity = '1';
+            }, 2000);
+          }
+        })
+        .catch(function (err) {
+          console.error('Login error:', err);
+          btn.innerHTML = '<div class="btn-inner"><i class="fas fa-exclamation-triangle"></i>&nbsp; Server Error</div>';
+          btn.style.background = 'linear-gradient(135deg,#d97706,#92400e)';
+          btn.style.opacity = '1';
+
+          setTimeout(function () {
+            btn.innerHTML = '<div class="btn-inner">Sign In<div class="btn-arrow"><i class="fas fa-arrow-right"></i></div></div>';
+            btn.style.background = '';
+            btn.style.boxShadow = '';
+            btn.disabled = false;
+            btn.style.opacity = '1';
+          }, 2500);
+        });
+    }
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HRMS Portal — API Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#0e1a22;--ink-mid:#3d5060;--ink-light:#8699a8;--accent:#0a6b6e;--accent-bright:#0d9298;--accent-glow:rgba(13,146,152,0.12);--accent-ultra:rgba(13,146,152,0.06);--white:#ffffff;--off:#f7f9fb;--border:#e2eaef;--panel:#0d1e27;--code-bg:#0a1520}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--ink);overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5%;height:68px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,0,0,0.055);box-shadow:0 4px 24px rgba(14,26,34,0.07)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-mark{width:34px;height:34px;background:linear-gradient(135deg,#0d9298,#0a6b6e);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.nav-logo-mark i{font-size:14px;color:#fff}
+.nav-logo-text{font-family:'Instrument Serif',Georgia,serif;font-size:20px;color:var(--ink);letter-spacing:-0.02em}
+.nav-logo-text span{color:var(--accent-bright)}
+.nav-link{display:flex;align-items:center;gap:7px;padding:8px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:500;color:var(--ink-light);text-decoration:none;transition:border-color .2s,color .2s,background .2s}
+.nav-link:hover{border-color:var(--accent-bright);color:var(--accent-bright);background:var(--accent-ultra)}
+.nav-link i{font-size:11px}
+
+.hero{padding:110px 5% 70px;background:var(--panel);text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 50%,rgba(13,146,152,0.1) 0%,transparent 50%),radial-gradient(circle at 80% 50%,rgba(13,146,152,0.06) 0%,transparent 50%);pointer-events:none}
+.hero::after{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,rgba(255,255,255,0.016) 0px,rgba(255,255,255,0.016) 1px,transparent 1px,transparent 28px);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(13,146,152,0.12);border:1px solid rgba(13,146,152,0.28);border-radius:100px;padding:6px 16px 6px 10px;margin-bottom:24px;position:relative;z-index:1}
+.badge-dot{width:22px;height:22px;border-radius:50%;background:var(--accent-glow);display:flex;align-items:center;justify-content:center}
+.badge-dot i{font-size:9px;color:var(--accent-bright)}
+.hero-badge span{font-size:12px;font-weight:600;color:var(--accent-bright);letter-spacing:.04em}
+.hero h1{font-family:'Instrument Serif',Georgia,serif;font-size:clamp(32px,5vw,52px);font-weight:400;color:#fff;line-height:1.15;letter-spacing:-0.025em;margin-bottom:16px;position:relative;z-index:1}
+.hero h1 em{font-style:italic;color:var(--accent-bright)}
+.hero p{font-size:14px;color:rgba(255,255,255,0.35);position:relative;z-index:1;max-width:480px;margin:0 auto;line-height:1.7}
+.hero-pills{display:flex;gap:10px;justify-content:center;margin-top:24px;flex-wrap:wrap;position:relative;z-index:1}
+.hero-pill{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:600;border:1px solid}
+.pill-v{background:rgba(13,146,152,0.12);border-color:rgba(13,146,152,0.3);color:var(--accent-bright)}
+.pill-rest{background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.25);color:#60a5fa}
+.pill-json{background:rgba(234,179,8,0.08);border-color:rgba(234,179,8,0.25);color:#fbbf24}
+
+.layout{max-width:1180px;margin:0 auto;padding:48px 5%;display:grid;grid-template-columns:220px 1fr;gap:48px;align-items:start}
+.sidebar{position:sticky;top:90px}
+.sidebar-title{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:10px}
+.sidebar-group{margin-bottom:20px}
+.sidebar-group-title{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-bright);margin-bottom:6px;padding-left:12px}
+.sidebar-nav{list-style:none}
+.sidebar-nav li{margin-bottom:2px}
+.sidebar-nav a{display:block;padding:7px 12px;border-radius:10px;font-size:13px;color:var(--ink-light);text-decoration:none;border-left:2px solid transparent;transition:background .2s,color .2s,border-color .2s}
+.sidebar-nav a:hover{background:var(--white);color:var(--ink-mid)}
+.sidebar-nav a.active{background:var(--accent-ultra);color:var(--accent);border-left-color:var(--accent-bright);font-weight:500}
+
+/* Endpoint sections */
+.ep-section{margin-bottom:32px;scroll-margin-top:100px}
+.ep-header{background:var(--white);border:1px solid var(--border);border-radius:16px 16px 0 0;padding:24px 28px;border-bottom:none}
+.ep-title-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.method-badge{padding:4px 10px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500}
+.method-post{background:rgba(34,197,94,0.1);color:#16a34a;border:1px solid rgba(34,197,94,0.25)}
+.method-get{background:rgba(59,130,246,0.1);color:#2563eb;border:1px solid rgba(59,130,246,0.25)}
+.method-put{background:rgba(234,179,8,0.1);color:#ca8a04;border:1px solid rgba(234,179,8,0.25)}
+.method-delete{background:rgba(239,68,68,0.1);color:#dc2626;border:1px solid rgba(239,68,68,0.25)}
+.ep-path{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--ink);font-weight:500}
+.ep-desc{font-size:13.5px;color:var(--ink-light);font-weight:300}
+
+.ep-body{background:var(--white);border:1px solid var(--border);border-radius:0 0 16px 16px;padding:0 28px 24px;margin-bottom:0}
+
+.param-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
+.param-table th{text-align:left;padding:8px 12px;background:var(--off);border:1px solid var(--border);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-light)}
+.param-table td{padding:10px 12px;border:1px solid var(--border);color:var(--ink-mid);vertical-align:top;line-height:1.5}
+.param-table td:first-child{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);font-weight:500}
+.required-badge{background:rgba(239,68,68,0.08);color:#dc2626;border:1px solid rgba(239,68,68,0.2);border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600}
+.optional-badge{background:var(--off);color:var(--ink-light);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600}
+
+/* Code blocks */
+.code-block{background:var(--code-bg);border-radius:12px;overflow:hidden;margin:16px 0}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.code-lang{font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.06em;text-transform:uppercase}
+.code-copy{background:none;border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:4px 10px;font-family:'DM Sans',sans-serif;font-size:11px;color:rgba(255,255,255,0.4);cursor:pointer;transition:border-color .2s,color .2s}
+.code-copy:hover{border-color:var(--accent-bright);color:var(--accent-bright)}
+.code-pre{padding:18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.75;color:rgba(255,255,255,0.75);margin:0}
+.c-key{color:#0d9298}
+.c-str{color:#a3e635}
+.c-num{color:#fb923c}
+.c-bool{color:#f472b6}
+.c-comment{color:rgba(255,255,255,0.3);font-style:italic}
+
+.section-divider{height:1px;background:var(--border);margin:40px 0}
+.s-label{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-bright);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.s-label::before{content:'';width:18px;height:2px;background:var(--accent-bright);border-radius:2px}
+.s-title{font-family:'Instrument Serif',Georgia,serif;font-size:clamp(22px,3vw,30px);font-weight:400;letter-spacing:-0.02em;color:var(--ink);margin-bottom:24px}
+.s-title em{font-style:italic;color:var(--accent-bright)}
+
+.info-box{background:var(--accent-ultra);border:1px solid rgba(13,146,152,0.2);border-radius:12px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;margin:16px 0}
+.info-box i{color:var(--accent-bright);font-size:14px;margin-top:2px;flex-shrink:0}
+.info-box p{font-size:13.5px;color:var(--ink-mid);margin:0;line-height:1.65;font-weight:400}
+
+.error-table{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0}
+.error-table th{text-align:left;padding:8px 12px;background:var(--off);border:1px solid var(--border);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-light)}
+.error-table td{padding:10px 12px;border:1px solid var(--border);color:var(--ink-mid);vertical-align:top}
+.error-table td:first-child{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500}
+.code-200{color:#16a34a}.code-400{color:#ca8a04}.code-401{color:#dc2626}.code-403{color:#9333ea}.code-500{color:#ef4444}
+
+footer{background:var(--ink);padding:40px 5% 28px;margin-top:60px}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.footer-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.footer-brand-name{font-family:'Instrument Serif',Georgia,serif;font-size:18px;color:#fff}
+.footer-brand-name span{color:var(--accent-bright)}
+.footer-links{display:flex;gap:24px;list-style:none}
+.footer-links a{font-size:12.5px;color:rgba(255,255,255,0.35);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:rgba(255,255,255,0.7)}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.22)}
+@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{position:static}.footer-inner{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="hrms_landing_page.html" class="nav-logo">
+    <div class="nav-logo-mark"><i class="fas fa-layer-group"></i></div>
+    <span class="nav-logo-text">HRMS <span>Portal</span></span>
+  </a>
+  <a href="hrms_landing_page.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Login</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge"><div class="badge-dot"><i class="fas fa-code"></i></div><span>Developer Docs</span></div>
+  <h1>HRMS <em>API</em> Documentation</h1>
+  <p>Integrate HRMS Portal with your existing tools using our REST API. All endpoints return JSON.</p>
+  <div class="hero-pills">
+    <span class="hero-pill pill-v">v1.0</span>
+    <span class="hero-pill pill-rest">REST API</span>
+    <span class="hero-pill pill-json">JSON</span>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-group">
+      <p class="sidebar-title">Getting Started</p>
+      <ul class="sidebar-nav">
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#auth">Authentication</a></li>
+        <li><a href="#errors">Error Codes</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-group">
+      <p class="sidebar-group-title">Endpoints</p>
+      <ul class="sidebar-nav">
+        <li><a href="#ep-login">POST /auth/login</a></li>
+        <li><a href="#ep-employees">GET /employees</a></li>
+        <li><a href="#ep-employee">GET /employees/:id</a></li>
+        <li><a href="#ep-attendance">GET /attendance</a></li>
+        <li><a href="#ep-leave">POST /leave/apply</a></li>
+        <li><a href="#ep-payroll">GET /payroll/:id</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <div>
+    <!-- Intro -->
+    <div id="intro" style="scroll-margin-top:100px">
+      <div class="s-label">Overview</div>
+      <h2 class="s-title">Getting <em>started</em></h2>
+      <div class="ep-section">
+        <div class="ep-header" style="border-radius:16px;border-bottom:1px solid var(--border)">
+          <p style="font-size:14px;color:var(--ink-mid);line-height:1.8;font-weight:300">The HRMS REST API allows developers to integrate employee management, payroll, and attendance data into external tools and systems. All API requests must be made over HTTPS. Responses are returned in JSON format.</p>
+          <div class="info-box" style="margin-top:16px">
+            <i class="fas fa-server"></i>
+            <p><strong>Base URL:</strong> <code style="font-family:'JetBrains Mono',monospace;font-size:13px;background:rgba(13,146,152,0.1);padding:2px 8px;border-radius:4px;color:var(--accent-bright)">https://api.hrmsportal.com/v1</code></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Auth -->
+    <div id="auth" style="scroll-margin-top:100px">
+      <div class="s-label">Security</div>
+      <h2 class="s-title"><em>Authentication</em></h2>
+      <div class="ep-section">
+        <div class="ep-header" style="border-radius:16px 16px 0 0">
+          <p style="font-size:14px;color:var(--ink-mid);line-height:1.8;font-weight:300">All API requests require a Bearer token in the Authorization header. Obtain a token by calling the <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--accent-ultra);padding:1px 6px;border-radius:4px;color:var(--accent)">/auth/login</code> endpoint.</p>
+        </div>
+        <div class="ep-body">
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">HTTP Header</span><button class="code-copy" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+            <pre class="code-pre"><span class="c-key">Authorization</span>: Bearer <span class="c-str">YOUR_ACCESS_TOKEN</span>
+<span class="c-key">Content-Type</span>: <span class="c-str">application/json</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Endpoints -->
+    <div class="s-label">Endpoints</div>
+    <h2 class="s-title">API <em>Reference</em></h2>
+
+    <!-- Login -->
+    <div class="ep-section" id="ep-login">
+      <div class="ep-header">
+        <div class="ep-title-row">
+          <span class="method-badge method-post">POST</span>
+          <span class="ep-path">/auth/login</span>
+        </div>
+        <p class="ep-desc">Authenticate a user and receive an access token for subsequent API calls.</p>
+      </div>
+      <div class="ep-body">
+        <p style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-light);margin:16px 0 8px">Request Body</p>
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td>email</td><td>string</td><td><span class="required-badge">Required</span></td><td>Employee's registered email address</td></tr>
+          <tr><td>password</td><td>string</td><td><span class="required-badge">Required</span></td><td>Account password (min 8 characters)</td></tr>
+        </table>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Request</span><button class="code-copy" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+          <pre class="code-pre">POST /v1/auth/login
+{
+  <span class="c-key">"email"</span>: <span class="c-str">"nikesh@company.com"</span>,
+  <span class="c-key">"password"</span>: <span class="c-str">"MyPassword123"</span>
+}</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Response 200</span><button class="code-copy" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+          <pre class="code-pre">{
+  <span class="c-key">"status"</span>: <span class="c-str">"success"</span>,
+  <span class="c-key">"token"</span>: <span class="c-str">"eyJhbGciOiJIUzI1NiIsInR5..."</span>,
+  <span class="c-key">"role"</span>: <span class="c-str">"HR"</span>,
+  <span class="c-key">"name"</span>: <span class="c-str">"Nikesh Kumar"</span>,
+  <span class="c-key">"expires_in"</span>: <span class="c-num">3600</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Get Employees -->
+    <div class="ep-section" id="ep-employees">
+      <div class="ep-header">
+        <div class="ep-title-row">
+          <span class="method-badge method-get">GET</span>
+          <span class="ep-path">/employees</span>
+        </div>
+        <p class="ep-desc">Retrieve a list of all employees. Requires HR Admin role.</p>
+      </div>
+      <div class="ep-body">
+        <p style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-light);margin:16px 0 8px">Query Parameters</p>
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td>department</td><td>string</td><td><span class="optional-badge">Optional</span></td><td>Filter by department name</td></tr>
+          <tr><td>role</td><td>string</td><td><span class="optional-badge">Optional</span></td><td>Filter by role: HR or Employee</td></tr>
+          <tr><td>page</td><td>integer</td><td><span class="optional-badge">Optional</span></td><td>Page number for pagination (default: 1)</td></tr>
+          <tr><td>limit</td><td>integer</td><td><span class="optional-badge">Optional</span></td><td>Results per page (default: 20, max: 100)</td></tr>
+        </table>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Response 200</span><button class="code-copy" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+          <pre class="code-pre">{
+  <span class="c-key">"total"</span>: <span class="c-num">1248</span>,
+  <span class="c-key">"page"</span>: <span class="c-num">1</span>,
+  <span class="c-key">"employees"</span>: [
+    {
+      <span class="c-key">"id"</span>: <span class="c-str">"EMP001"</span>,
+      <span class="c-key">"name"</span>: <span class="c-str">"Nikesh Kumar"</span>,
+      <span class="c-key">"email"</span>: <span class="c-str">"nikesh@company.com"</span>,
+      <span class="c-key">"department"</span>: <span class="c-str">"Engineering"</span>,
+      <span class="c-key">"role"</span>: <span class="c-str">"Employee"</span>,
+      <span class="c-key">"status"</span>: <span class="c-str">"Active"</span>
+    }
+  ]
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Get Employee by ID -->
+    <div class="ep-section" id="ep-employee">
+      <div class="ep-header">
+        <div class="ep-title-row">
+          <span class="method-badge method-get">GET</span>
+          <span class="ep-path">/employees/:id</span>
+        </div>
+        <p class="ep-desc">Retrieve full profile details of a single employee by their employee ID.</p>
+      </div>
+      <div class="ep-body">
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Example Request</span><button class="code-copy" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+          <pre class="code-pre">GET /v1/employees/EMP001</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Response 200</span><button class="code-copy" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+          <pre class="code-pre">{
+  <span class="c-key">"id"</span>: <span class="c-str">"EMP001"</span>,
+  <span class="c-key">"name"</span>: <span class="c-str">"Nikesh Kumar"</span>,
+  <span class="c-key">"email"</span>: <span class="c-str">"nikesh@company.com"</span>,
+  <span class="c-key">"phone"</span>: <span class="c-str">"+91 98765 43210"</span>,
+  <span class="c-key">"department"</span>: <span class="c-str">"Engineering"</span>,
+  <span class="c-key">"designation"</span>: <span class="c-str">"Senior Developer"</span>,
+  <span class="c-key">"joining_date"</span>: <span class="c-str">"2023-06-01"</span>,
+  <span class="c-key">"status"</span>: <span class="c-str">"Active"</span>,
+  <span class="c-key">"salary"</span>: <span class="c-num">85000</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance -->
+    <div class="ep-section" id="ep-attendance">
+      <div class="ep-header">
+        <div class="ep-title-row">
+          <span class="method-badge method-get">GET</span>
+          <span class="ep-path">/attendance</span>
+        </div>
+        <p class="ep-desc">Retrieve attendance records filtered by employee and date range.</p>
+      </div>
+      <div class="ep-body">
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td>employee_id</td><td>string</td><td><span class="required-badge">Required</span></td><td>The employee's ID</td></tr>
+          <tr><td>from</td><td>date</td><td><span class="required-badge">Required</span></td><td>Start date (YYYY-MM-DD)</td></tr>
+          <tr><td>to</td><td>date</td><td><span class="required-badge">Required</span></td><td>End date (YYYY-MM-DD)</td></tr>
+        </table>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Response 200</span><button class="code-copy" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+          <pre class="code-pre">{
+  <span class="c-key">"employee_id"</span>: <span class="c-str">"EMP001"</span>,
+  <span class="c-key">"records"</span>: [
+    {
+      <span class="c-key">"date"</span>: <span class="c-str">"2026-03-22"</span>,
+      <span class="c-key">"check_in"</span>: <span class="c-str">"09:02 AM"</span>,
+      <span class="c-key">"check_out"</span>: <span class="c-str">"06:15 PM"</span>,
+      <span class="c-key">"hours"</span>: <span class="c-num">9.22</span>,
+      <span class="c-key">"status"</span>: <span class="c-str">"Present"</span>
+    }
+  ]
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leave Apply -->
+    <div class="ep-section" id="ep-leave">
+      <div class="ep-header">
+        <div class="ep-title-row">
+          <span class="method-badge method-post">POST</span>
+          <span class="ep-path">/leave/apply</span>
+        </div>
+        <p class="ep-desc">Submit a leave application for an employee.</p>
+      </div>
+      <div class="ep-body">
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td>employee_id</td><td>string</td><td><span class="required-badge">Required</span></td><td>The employee's ID</td></tr>
+          <tr><td>leave_type</td><td>string</td><td><span class="required-badge">Required</span></td><td>casual / medical / earned</td></tr>
+          <tr><td>from_date</td><td>date</td><td><span class="required-badge">Required</span></td><td>Leave start date (YYYY-MM-DD)</td></tr>
+          <tr><td>to_date</td><td>date</td><td><span class="required-badge">Required</span></td><td>Leave end date (YYYY-MM-DD)</td></tr>
+          <tr><td>reason</td><td>string</td><td><span class="optional-badge">Optional</span></td><td>Reason for leave</td></tr>
+        </table>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Request</span><button class="code-copy" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+          <pre class="code-pre">POST /v1/leave/apply
+{
+  <span class="c-key">"employee_id"</span>: <span class="c-str">"EMP001"</span>,
+  <span class="c-key">"leave_type"</span>: <span class="c-str">"casual"</span>,
+  <span class="c-key">"from_date"</span>: <span class="c-str">"2026-04-10"</span>,
+  <span class="c-key">"to_date"</span>: <span class="c-str">"2026-04-11"</span>,
+  <span class="c-key">"reason"</span>: <span class="c-str">"Personal work"</span>
+}</pre>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Response 200</span><button class="code-copy" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+          <pre class="code-pre">{
+  <span class="c-key">"status"</span>: <span class="c-str">"success"</span>,
+  <span class="c-key">"leave_id"</span>: <span class="c-str">"LV20260410001"</span>,
+  <span class="c-key">"message"</span>: <span class="c-str">"Leave application submitted for approval"</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payroll -->
+    <div class="ep-section" id="ep-payroll">
+      <div class="ep-header">
+        <div class="ep-title-row">
+          <span class="method-badge method-get">GET</span>
+          <span class="ep-path">/payroll/:id</span>
+        </div>
+        <p class="ep-desc">Retrieve payroll details for an employee for a specific month.</p>
+      </div>
+      <div class="ep-body">
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td>month</td><td>string</td><td><span class="required-badge">Required</span></td><td>Month in YYYY-MM format (e.g. 2026-03)</td></tr>
+        </table>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Response 200</span><button class="code-copy" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button></div>
+          <pre class="code-pre">{
+  <span class="c-key">"employee_id"</span>: <span class="c-str">"EMP001"</span>,
+  <span class="c-key">"month"</span>: <span class="c-str">"2026-03"</span>,
+  <span class="c-key">"gross_salary"</span>: <span class="c-num">85000</span>,
+  <span class="c-key">"deductions"</span>: {
+    <span class="c-key">"pf"</span>: <span class="c-num">5100</span>,
+    <span class="c-key">"tds"</span>: <span class="c-num">3200</span>,
+    <span class="c-key">"esi"</span>: <span class="c-num">637</span>
+  },
+  <span class="c-key">"net_salary"</span>: <span class="c-num">76063</span>,
+  <span class="c-key">"payslip_url"</span>: <span class="c-str">"https://api.hrmsportal.com/payslips/EMP001-2026-03.pdf"</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Error Codes -->
+    <div id="errors" style="scroll-margin-top:100px">
+      <div class="s-label">Reference</div>
+      <h2 class="s-title">Error <em>codes</em></h2>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px 28px">
+        <table class="error-table">
+          <tr><th>Status Code</th><th>Error</th><th>Description</th></tr>
+          <tr><td class="code-200">200</td><td>OK</td><td>Request successful</td></tr>
+          <tr><td class="code-400">400</td><td>Bad Request</td><td>Missing or invalid request parameters</td></tr>
+          <tr><td class="code-401">401</td><td>Unauthorized</td><td>Missing or invalid Bearer token</td></tr>
+          <tr><td class="code-403">403</td><td>Forbidden</td><td>You don't have permission to access this resource</td></tr>
+          <tr><td class="code-401">404</td><td>Not Found</td><td>The requested resource does not exist</td></tr>
+          <tr><td class="code-500">500</td><td>Server Error</td><td>An unexpected error occurred on our end</td></tr>
+        </table>
+        <div class="code-block" style="margin-top:20px">
+          <div class="code-header"><span class="code-lang">Error Response Format</span></div>
+          <pre class="code-pre">{
+  <span class="c-key">"status"</span>: <span class="c-str">"error"</span>,
+  <span class="c-key">"code"</span>: <span class="c-num">401</span>,
+  <span class="c-key">"message"</span>: <span class="c-str">"Invalid or expired token. Please login again."</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <a href="hrms_landing_page.html" class="footer-brand"><div class="nav-logo-mark"><i class="fas fa-layer-group"></i></div><span class="footer-brand-name">HRMS <span>Portal</span></span></a>
+    <ul class="footer-links">
+      <li><a href="hrms_privacy.html">Privacy Policy</a></li>
+      <li><a href="hrms_terms_of_use.html">Terms of Use</a></li>
+      <li><a href="hrms_support.html">Support</a></li>
+      <li><a href="hrms_Api_docs.html">API Docs</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 HRMS Portal. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>{
+  const ids=['intro','auth','ep-login','ep-employees','ep-employee','ep-attendance','ep-leave','ep-payroll','errors'];
+  let active='intro';
+  ids.forEach(id=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<200)active=id;});
+  document.querySelectorAll('.sidebar-nav a').forEach(a=>{
+    const href=a.getAttribute('href').replace('#','');
+    a.classList.toggle('active',href===active);
+  });
+});
+
+function copyCode(btn){
+  const pre=btn.closest('.code-block').querySelector('.code-pre');
+  navigator.clipboard.writeText(pre.innerText).then(()=>{
+    btn.innerHTML='<i class="fas fa-check"></i> Copied!';
+    btn.style.borderColor='var(--accent-bright)';
+    btn.style.color='var(--accent-bright)';
+    setTimeout(()=>{btn.innerHTML='<i class="fas fa-copy"></i> Copy';btn.style.borderColor='';btn.style.color='';},2000);
+  });
+}
+</script>
+</body>
+</html>

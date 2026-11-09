@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HRMS — Self Details</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:wght@500;600&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --ink: #ffffff;
+      --ink-mid: #a3b8cc;
+      --ink-light: #7a8fa3;
+      --accent: #0a6b6e;
+      --accent-bright: #0d9298;
+      --accent-glow: rgba(13, 146, 152, 0.18);
+      --surface: rgba(255, 255, 255, 0.03);
+      --surface-hover: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.08);
+      --bg-base: #0f1923;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
+      background: var(--bg-base);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 50%, rgba(13, 146, 152, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 85% 20%, rgba(34, 211, 238, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(13, 146, 152, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+      pointer-events: none;
+      z-index: -1;
+      -webkit-mask-image: radial-gradient(ellipse at center, transparent 40%, black 100%);
+      mask-image: radial-gradient(ellipse at center, transparent 40%, black 100%);
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      padding: 0 4%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(15, 25, 35, 0.7);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo-mark {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #0d9298, #0a6b6e);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-logo-mark i {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .nav-logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: #fff;
+      letter-spacing: -0.02em;
+      font-weight: 600;
+    }
+
+    .nav-logo-text span {
+      color: var(--accent-bright);
+    }
+
+    .nav-user {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-mid);
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .nav-user:hover {
+      color: #fff;
+      border-color: var(--accent-bright);
+      background: var(--accent-glow);
+      transform: translateY(-2px);
+    }
+
+    /* Dropdown CSS - Styled for Glassmorphism */
+    .nav-user-dropdown-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 55px;
+      background: rgba(15, 25, 35, 0.9);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      min-width: 180px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      border-radius: 12px;
+      overflow: hidden;
+      animation: fadeIn 0.2s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dropdown-menu a {
+      color: var(--ink-mid);
+      padding: 14px 20px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: var(--surface-hover);
+      color: #fff;
+      padding-left: 24px;
+    }
+
+    .dropdown-menu a i {
+      margin-right: 12px;
+      width: 16px;
+      text-align: center;
+      color: var(--accent-bright);
+      transition: transform 0.2s ease;
+    }
+
+    .dropdown-menu a:hover i {
+      transform: scale(1.1);
+    }
+
+    .show {
+      display: block;
+    }
+
+    /* ── Main Container ── */
+    .container {
+      padding: 110px 5% 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Profile Section */
+    .profile-section {
+      text-align: center;
+      margin-bottom: 50px;
+      animation: fadeInDown 0.6s ease forwards;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: transparent;
+      border: 1px solid var(--accent-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .avatar i {
+      font-size: 60px;
+      color: #ffffff;
+    }
+
+    /* Glow removed behind avatar */
+
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .profile-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .pd-row {
+      font-size: 14px;
+      color: var(--ink-mid);
+      letter-spacing: 0.03em;
+    }
+
+    .pd-label {
+      font-weight: 500;
+      color: var(--ink-light);
+      margin-right: 4px;
+    }
+
+    .pd-val {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .pd-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      color: var(--accent-bright);
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      animation: fadeInUp 0.6s 0.2s ease forwards;
+      opacity: 0;
+    }
+
+    /* Refined Card Design */
+    .dash-card {
+      display: flex;
+      width: calc(25% - 15px);
+      min-width: 220px;
+      height: 90px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .dash-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .dash-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .dash-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Left Color Block */
+    .dc-icon-box {
+      width: 32%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s;
+      position: relative;
+      z-index: 2;
+    }
+
+    .dc-icon-box i {
+      font-size: 26px;
+      color: rgba(255, 255, 255, 0.95);
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .dc-icon-box span.text-icon {
+      font-size: 28px;
+      color: rgba(255, 255, 255, 0.95);
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      font-weight: 600;
+    }
+
+    .dash-card:hover .dc-icon-box {
+      width: 36%;
+    }
+
+    .dash-card:hover .dc-icon-box i,
+    .dash-card:hover .dc-icon-box span.text-icon {
+      transform: scale(1.15);
+    }
+
+    /* Right Text Area */
+    .dc-text-box {
+      width: 68%;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+      background: transparent;
+      border-left: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .dc-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.02em;
+      transition: color 0.3s;
+    }
+
+    .dc-sub {
+      font-size: 11px;
+      color: var(--ink-light);
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .c-data .dc-icon-box {
+      background: linear-gradient(135deg, #0d9298, #0a6b6e);
+    }
+
+    .c-data .dc-sub {
+      color: #2dd4bf;
+    }
+
+    .c-profile .dc-icon-box {
+      background: linear-gradient(135deg, #4ade80, #16a34a);
+    }
+
+    .c-profile .dc-sub {
+      color: #4ade80;
+    }
+
+    .c-policy .dc-icon-box {
+      background: linear-gradient(135deg, #fb923c, #ea580c);
+    }
+
+    .c-policy .dc-sub {
+      color: #fb923c;
+    }
+
+    .c-campus .dc-icon-box {
+      background: linear-gradient(135deg, #c084fc, #9333ea);
+    }
+
+    .c-campus .dc-sub {
+      color: #c084fc;
+    }
+
+    .c-finance .dc-icon-box {
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+    }
+
+    .c-finance .dc-sub {
+      color: #22d3ee;
+    }
+
+    .c-track .dc-icon-box {
+      background: linear-gradient(135deg, #facc15, #ca8a04);
+    }
+
+    .c-track .dc-sub {
+      color: #facc15;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .dash-card {
+        width: calc(50% - 10px);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .dash-card {
+        width: 100%;
+        height: 80px;
+      }
+
+      .dc-title {
+        font-size: 15px;
+      }
+    }
+
+    /* AI Chatbot Styles */
+    .chatbot-wrapper {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .chatbot-toggle-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--accent-bright);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(13, 146, 152, 0.3);
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .chatbot-toggle-btn:hover {
+      transform: scale(1.05);
+      background: var(--accent);
+    }
+
+    .chatbot-window {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 360px;
+      height: 520px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      border: 1px solid #e5e7eb;
+    }
+
+    .chatbot-window.open {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+
+    .chatbot-header {
+      background: #0d1e27;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chatbot-header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .chatbot-header-title i {
+      color: #2dd4bf;
+    }
+
+    .chatbot-close {
+      background: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      opacity: 0.8;
+    }
+
+    .chatbot-close:hover {
+      opacity: 1;
+    }
+
+    .chatbot-messages {
+      flex-grow: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      background: #f8fafc;
+    }
+
+    .chat-msg {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .chat-msg.bot {
+      background: #e0f2f1;
+      color: #0a6b6e;
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+    }
+
+    .chat-msg.user {
+      background: var(--accent-bright);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .chat-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: -5px;
+      margin-bottom: 5px;
+      padding-left: 5px;
+    }
+
+    .chat-chip {
+      background: #fff;
+      border: 1px solid var(--accent-bright);
+      color: var(--accent-bright);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chat-chip:hover {
+      background: var(--accent-bright);
+      color: #fff;
+    }
+
+    .chatbot-input-area {
+      padding: 15px;
+      border-top: 1px solid #e5e7eb;
+      background: #fff;
+      display: flex;
+      gap: 10px;
+    }
+
+    .chatbot-input-area input {
+      flex-grow: 1;
+      padding: 10px 15px;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      outline: none;
+      font-size: 13px;
+      color: #333;
+    }
+
+    .chatbot-input-area input:focus {
+      border-color: var(--accent-bright);
+    }
+
+    .chatbot-send-btn {
+      background: var(--accent-bright);
+      color: white;
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .chatbot-send-btn:hover {
+      background: var(--accent);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <a href="hrms_landing_page.html" class="nav-logo">
+      <div class="nav-logo-mark"><i class="fas fa-layer-group"></i></div>
+      <span class="nav-logo-text">HRMS <span>Portal</span></span>
+    </a>
+    <div class="nav-user-dropdown-container">
+      <div class="nav-user" onclick="toggleDropdown()">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="dropdown-menu" id="userDropdown">
+        <a href="#"><i class="fas fa-info-circle"></i> About</a>
+        <a href="#"><i class="fas fa-cog"></i> Settings</a>
+        <a href="hrms_employee_login_page.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+
+    <!-- Profile Area -->
+    <div class="profile-section">
+      <div class="avatar-wrap">
+        <div class="avatar">
+          <i class="fas fa-user"></i>
+        </div>
+      </div>
+      <div class="profile-details">
+        <div class="pd-row"><span class="pd-label">StaffCode :</span> <span class="pd-val" id="profile-code">...</span>
+        </div>
+        <div class="pd-name" id="profile-name">...</div>
+        <div class="pd-row"><span class="pd-label">DepartmentName :</span> <span class="pd-val"
+            id="profile-dept">...</span></div>
+        <div class="pd-row"><span class="pd-label">Asset ID :</span> <span class="pd-val" id="profile-asset">...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+
+      <!-- Card 1 -->
+      <a href="hrms_my_data_page.html" class="dash-card c-data">
+        <div class="dc-icon-box"><i class="fas fa-th-large"></i></div>
+        <div class="dc-text-box">
+          <div class="dc-sub">View</div>
+          <div class="dc-title">My Data</div>
+        </div>
+      </a>
+
+      <!-- Card 2 -->
+      <a href="hrms_my_profile.html" class="dash-card c-profile">
+        <div class="dc-icon-box"><i class="fas fa-user"></i></div>
+        <div class="dc-text-box">
+          <div class="dc-sub">Manage</div>
+          <div class="dc-title">My Profile</div>
+        </div>
+      </a>
+
+      <!-- Card 3 -->
+      <a href="hrms_my_policy.html" class="dash-card c-policy">
+        <div class="dc-icon-box"><i class="fas fa-file-alt"></i></div>
+        <div class="dc-text-box">
+          <div class="dc-sub">Guidelines</div>
+          <div class="dc-title">My Policy</div>
+        </div>
+      </a>
+
+      <!-- Card 4 -->
+      <a href="hrms_my_campus.html" class="dash-card c-campus">
+        <div class="dc-icon-box"><i class="fas fa-building"></i></div>
+        <div class="dc-text-box">
+          <div class="dc-sub">Facilities</div>
+          <div class="dc-title">My Campus</div>
+        </div>
+      </a>
+
+      <!-- Card 5 -->
+      <a href="hrms_my_finance.html" class="dash-card c-finance">
+        <div class="dc-icon-box"><span class="text-icon">Rs</span></div>
+        <div class="dc-text-box">
+          <div class="dc-sub">Payroll</div>
+          <div class="dc-title">My Finance</div>
+        </div>
+      </a>
+
+      <!-- Card 6 -->
+      <a href="hrms_my_track.html" class="dash-card c-track">
+        <div class="dc-icon-box"><i class="fas fa-binoculars"></i></div>
+        <div class="dc-text-box">
+          <div class="dc-sub">Leaves</div>
+          <div class="dc-title">My Track</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- AI Chatbot -->
+  <div class="chatbot-wrapper">
+    <div class="chatbot-window" id="chatbotWindow">
+      <div class="chatbot-header">
+        <div class="chatbot-header-title">
+          <i class="fas fa-brain"></i> Smart AI HRMS
+        </div>
+        <button class="chatbot-close" onclick="toggleChatbot()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="chatbot-messages" id="chatbotMessages">
+        <div class="chat-msg bot"></div>
+
+        <div class="chat-chips">
+          <button class="chat-chip" onclick="sendQuickReply('Apply for Leave')">Apply for Leave</button>
+          <button class="chat-chip" onclick="sendQuickReply('Check Leave Status')">Check Leave Status</button>
+          <button class="chat-chip" onclick="sendQuickReply('View HR Policies')">View HR Policies</button>
+        </div>
+      </div>
+
+      <div class="chatbot-input-area">
+        <input type="text" id="chatbotInput" placeholder="Type your message..." onkeypress="handleChatKeyPress(event)">
+        <button class="chatbot-send-btn" onclick="sendChatMessage()">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+
+    <button class="chatbot-toggle-btn" id="chatbotToggleBtn" onclick="toggleChatbot()">
+      <i class="fas fa-robot"></i>
+    </button>
+  </div>
+
+  <script>
+    function toggleDropdown() {
+      document.getElementById("userDropdown").classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function (event) {
+      if (!event.target.matches('.nav-user') && !event.target.matches('.nav-user i')) {
+        var dropdowns = document.getElementsByClassName("dropdown-menu");
+        for (var i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const userEmail = localStorage.getItem("userEmail");
+
+      // If we have an email stored from the login page, we fetch the details.
+      if (userEmail) {
+
+        const backendUrl = "/api/powerautomate";
+
+        fetch(backendUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "loginAuth", payload: { email: userEmail } })
+        })
+          .then(res => res.json())
+          .then(data => {
+            // We assume your Power Automate returns JSON like:
+            // { "status": "success", "staffCode": "5517", "name": "Y.Veera Vasantharao", "department": "T-HUB", "assetId": "3" }
+
+            if (data.status === "success") {
+              document.getElementById("profile-code").textContent = data.staffCode || "N/A";
+              document.getElementById("profile-name").textContent = data.name || "N/A";
+              document.getElementById("profile-dept").textContent = data.department || "N/A";
+              document.getElementById("profile-asset").textContent = data.assetId || "N/A";
+            } else {
+              console.error("Could not fetch profile from SharePoint.");
+            }
+          })
+          .catch(err => {
+            console.error("Error connecting to Power Automate:", err);
+          });
+      }
+    });
+
+    // Chatbot Logic
+    function toggleChatbot() {
+      const win = document.getElementById("chatbotWindow");
+      const icon = document.querySelector("#chatbotToggleBtn i");
+      win.classList.toggle("open");
+      if (win.classList.contains("open")) {
+        icon.classList.remove("fa-comment-dots");
+        icon.classList.add("fa-times");
+      } else {
+        icon.classList.remove("fa-times");
+        icon.classList.add("fa-comment-dots");
+      }
+    }
+
+    function sendQuickReply(text) {
+      document.getElementById("chatbotInput").value = text;
+      sendChatMessage();
+    }
+
+    function handleChatKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendChatMessage();
+      }
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById("chatbotInput");
+      const msgText = input.value.trim();
+      if (!msgText) return;
+
+      const messagesContainer = document.getElementById("chatbotMessages");
+
+      // Add user message
+      const userDiv = document.createElement("div");
+      userDiv.className = "chat-msg user";
+      userDiv.innerText = msgText;
+      messagesContainer.appendChild(userDiv);
+
+      input.value = "";
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      // Add loading state
+      const loadingDiv = document.createElement("div");
+      loadingDiv.className = "chat-msg bot";
+      loadingDiv.innerText = "Typing...";
+      loadingDiv.id = "chat-loading";
+      messagesContainer.appendChild(loadingDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      try {
+        const API_URL = "/api/chat";
+
+        let userName = "there";
+        const nameEl = document.getElementById("profile-name");
+        if (nameEl && nameEl.textContent !== "...") {
+          userName = nameEl.textContent.split(" ")[0];
+        }
+
+        const prompt = `You are a smart, empathetic, ego-free HR Assistant for our company. 
+        Guidelines:
+        1. Empathy: Treat the user (${userName}) like a friend. Any reason for leave (movie, vacation, rest) is valid and approved without judgment.
+        2. Leaves: They have 12 Casual Leaves and 5 Sick Leaves. If they ask to apply, tell them it's approved and ask them to apply in the 'My Track' tab.
+        3. Other queries: Guide salary/pay to 'My Finance', policies to 'My Policy', office/desk to 'My Campus'.
+        4. Tone: Very short (1-2 sentences), sweet, and helpful. Do not use markdown like ** or ## in your response, use simple text.
+        
+        User Question: ${msgText}`;
+
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  { text: prompt }
+                ]
+              }
+            ]
+          })
+        });
+
+        const data = await response.json();
+
+        document.getElementById("chat-loading").remove();
+
+        const botDiv = document.createElement("div");
+        botDiv.className = "chat-msg bot";
+
+        if (data.candidates && data.candidates.length > 0) {
+          botDiv.innerText = data.candidates[0].content.parts[0].text;
+        } else if (data.error && data.error.message) {
+          botDiv.innerText = "API Error: " + data.error.message;
+        } else {
+          botDiv.innerText = "I'm sorry, I couldn't process that request right now.";
+        }
+
+        messagesContainer.appendChild(botDiv);
+      } catch (error) {
+        document.getElementById("chat-loading").remove();
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "chat-msg bot";
+        errorDiv.innerText = "Sorry, error connecting to Gemini AI.";
+        messagesContainer.appendChild(errorDiv);
+        console.error("Gemini API Error:", error);
+      }
+
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>My Profile - HRMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0d9298;
+      --primary-hover: #0a6b6e;
+      --sidebar-bg: #0d1e27;
+      --sidebar-hover: #122533;
+      --sidebar-active: #0d9298;
+      --bg-color: #f4f6f8;
+      --card-bg: #ffffff;
+      --text-main: #333333;
+      --text-label: #0a6b6e;
+      --border-color: #e5e7eb;
+      --topbar-bg: #ffffff;
+      --btn-cyan: #0d9298;
+      --btn-orange: #f0ad4e;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Top Bar */
+    nav {
+      height: 60px;
+      background-color: var(--topbar-bg);
+      display: flex;
+      align-items: center;
+      padding: 0 30px;
+      justify-content: space-between;
+      color: var(--text-main);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 20;
+      flex-shrink: 0;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .hamburger {
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--primary);
+      transition: color 0.3s;
+    }
+
+    .hamburger:hover {
+      color: var(--primary-hover);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--sidebar-bg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo-mark {
+      width: 30px;
+      height: 30px;
+      background: var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-logo-mark i {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .nav-logo-text span {
+      color: var(--primary);
+    }
+
+    .nav-user {
+      color: var(--primary);
+      font-size: 26px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .nav-user:hover {
+      transform: scale(1.05);
+    }
+
+    .nav-user-dropdown-container {
+      position: relative;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      width: 150px;
+      display: none;
+      flex-direction: column;
+      margin-top: 10px;
+      z-index: 100;
+    }
+
+    .dropdown-menu.show {
+      display: flex !important;
+    }
+
+    .dropdown-menu a {
+      padding: 12px 15px;
+      text-decoration: none;
+      color: #333;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dropdown-menu a i {
+      color: #555;
+      width: 16px;
+    }
+
+    .dropdown-menu a:hover {
+      background: #f8fafc;
+      color: var(--text-label);
+    }
+
+    /* Layout */
+    .app-body {
+      display: flex;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: var(--sidebar-bg);
+      color: #94a3b8;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      flex-shrink: 0;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      overflow-y: auto;
+      background-image: radial-gradient(circle at 20% 90%, rgba(13, 146, 152, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 90%, rgba(10, 107, 110, 0.04) 0%, transparent 50%);
+    }
+
+    .profile-header {
+      padding: 30px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .avatar-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #000;
+      border: 2px solid var(--primary);
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .avatar-circle i {
+      font-size: 60px;
+      color: #fff;
+      margin-bottom: -5px;
+    }
+
+    .profile-name {
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      color: #fff;
+    }
+
+    .profile-role-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    .profile-status {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #4caf50;
+      border-radius: 50%;
+    }
+
+    .nav-list {
+      list-style: none;
+      padding: 15px 0;
+      flex-grow: 1;
+    }
+
+    .nav-item-container {
+      margin-bottom: 2px;
+    }
+
+    .nav-item {
+      padding: 14px 20px 14px 25px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 14px;
+      color: #94a3b8;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .nav-item-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-item-left i {
+      width: 25px;
+      font-size: 14px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    .nav-item:hover {
+      background-color: var(--sidebar-hover);
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background-color: var(--sidebar-active);
+      color: #fff;
+      border-radius: 8px;
+      margin: 0 15px;
+      padding: 12px 20px 12px 10px;
+    }
+
+    /* Main Content */
+    .main-wrapper {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .content-area {
+      padding: 30px 40px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .page-header-new {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 25px;
+    }
+
+    .page-title-new h1 {
+      font-size: 24px;
+      color: #1e293b;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .page-title-new p {
+      font-size: 14px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .page-title-new p span {
+      color: #64748b;
+    }
+
+    .personal-data-btn {
+      background: #e8f5e9;
+      color: #4caf50;
+      border: 1px solid #c8e6c9;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .personal-data-btn i {
+      font-size: 16px;
+    }
+
+    /* New Profile Cards Styles */
+    .profile-card {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 35px 40px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      position: relative;
+    }
+
+    .profile-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .profile-card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile-card-icon {
+      width: 40px;
+      height: 40px;
+      background: #e0f2f1;
+      color: var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .profile-card-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .profile-btn-outline {
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      background: transparent;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .profile-btn-outline:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* User Intro Section (Top of card) */
+    .user-intro {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .user-intro-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #000;
+      border: 3px solid var(--primary);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .user-intro-avatar i {
+      font-size: 80px;
+      color: #fff;
+      margin-bottom: -5px;
+    }
+
+    .user-intro-details h2 {
+      font-size: 24px;
+      color: #1e293b;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .user-intro-details .role {
+      font-size: 15px;
+      color: #475569;
+      margin-bottom: 3px;
+    }
+
+    .user-intro-details .college {
+      font-size: 14px;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .profile-body {
+      display: flex;
+      gap: 60px;
+    }
+
+    .profile-col {
+      flex: 1;
+    }
+
+    .profile-col:first-child {
+      border-right: 1px solid #f1f5f9;
+      padding-right: 60px;
+    }
+
+    .profile-info-row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    .profile-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 200px;
+      color: #64748b;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .mini-icon {
+      width: 30px;
+      height: 30px;
+      background: #e0f2f1;
+      color: var(--primary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .profile-val {
+      color: #334155;
+      font-weight: 500;
+      flex: 1;
+      word-break: break-word;
+      min-height: 20px;
+      display: flex;
+      align-items: center;
+      padding-top: 5px;
+    }
+
+    .profile-val input,
+    .edu-val input {
+      width: 100%;
+      max-width: 300px;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      color: #333;
+    }
+
+    .profile-val input:focus,
+    .edu-val input:focus {
+      border-color: var(--sidebar-active);
+    }
+
+    /* Education Table */
+    .edu-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .edu-table th {
+      padding: 15px;
+      text-align: left;
+      font-size: 14px;
+      color: #1e293b;
+      font-weight: 600;
+      background-color: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .edu-table td {
+      padding: 15px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 14px;
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .edu-table th i {
+      color: var(--primary);
+      margin-right: 8px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-left">
+      <i class="fas fa-bars hamburger"></i>
+      <a href="hrms_self_details-page.html" class="nav-logo">
+        <div class="nav-logo-mark"><i class="fas fa-layer-group"></i></div>
+        <div class="nav-logo-text">HRMS <span>Portal</span></div>
+      </a>
+    </div>
+
+    <div class="nav-user-dropdown-container">
+      <div class="nav-user" onclick="toggleDropdown()">
+        <i class="fas fa-user-circle"></i>
+      </div>
+      <div class="dropdown-menu" id="userDropdown">
+        <a href="#"><i class="fas fa-info-circle"></i> About</a>
+        <a href="#"><i class="fas fa-cog"></i> Settings</a>
+        <a href="hrms_employee_login_page.html" onclick="localStorage.removeItem('userEmail')"><i
+            class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="app-body">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="profile-header">
+        <div class="avatar-circle">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="profile-name" id="sidebar-name">Nikesh Kumar</div>
+        <div class="profile-role-sub">Staff</div>
+        <!-- <div class="profile-status"><div class="status-dot"></div> Online</div> -->
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item-container">
+          <a href="hrms_my_profile.html" class="nav-item active">
+            <div class="nav-item-left"><i class="fas fa-address-card"></i> Profile</div>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <div class="content-area">
+
+        <div class="page-header-new">
+          <div class="page-title-new">
+            <h1>My Profile</h1>
+            <p>Home <span>></span> Profile</p>
+          </div>
+          <div>
+            <div class="personal-data-btn">
+              <i class="fas fa-user-check"></i> Personal Data
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Data Card -->
+        <div class="profile-card">
+
+          <div class="user-intro">
+            <div class="user-intro-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="user-intro-details">
+              <h2 id="main-name">Nikesh Kumar</h2>
+              <div class="role" id="main-role">Data Spelist</div>
+              <div class="college" id="main-college">ACET</div>
+            </div>
+          </div>
+
+          <div class="profile-body">
+            <!-- Left Column -->
+            <div class="profile-col">
+              <div class="profile-info-row">
+                <div class="profile-label">
+                  <div class="mini-icon"><i class="far fa-calendar-alt"></i></div>
+                  Date Of Birth
+                </div>
+                <div class="profile-val" id="val-dob">13-08-2005</div>
+              </div>
+
+              <div class="profile-info-row">
+                <div class="profile-label">
+                  <div class="mini-icon"><i class="fas fa-map-pin"></i></div>
+                  PinNo
+                </div>
+                <div class="profile-val" id="val-pin">521175</div>
+              </div>
+
+              <div class="profile-info-row">
+                <div class="profile-label">
+                  <div class="mini-icon"><i class="fas fa-map-marker-alt"></i></div>
+                  Street
+                </div>
+                <div class="profile-val" id="val-street">markayandeya bazar</div>
+              </div>
+
+              <div class="profile-info-row">
+                <div class="profile-label">
+                  <div class="mini-icon"><i class="fas fa-phone-alt"></i></div>
+                  Mobile No
+                </div>
+                <div class="profile-val" id="val-mobile">9391647391</div>
+              </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="profile-col">
+              <div class="profile-info-row">
+                <div class="profile-label">
+                  <div class="mini-icon"><i class="far fa-id-card"></i></div>
+                  Aadhaar No
+                </div>
+                <div class="profile-val" id="val-aadhaar">12345678912</div>
+              </div>
+
+              <div class="profile-info-row">
+                <div class="profile-label">
+                  <div class="mini-icon"><i class="fas fa-home"></i></div>
+                  D No
+                </div>
+                <div class="profile-val" id="val-dno">1-275</div>
+              </div>
+
+              <div class="profile-info-row">
+                <div class="profile-label">
+                  <div class="mini-icon"><i class="fas fa-city"></i></div>
+                  City
+                </div>
+                <div class="profile-val" id="val-city">Jaggayyapeta</div>
+              </div>
+
+              <div class="profile-info-row">
+                <div class="profile-label">
+                  <div class="mini-icon"><i class="far fa-envelope"></i></div>
+                  Email Id
+                </div>
+                <div class="profile-val" id="val-email">nikeshkumar@gmail.com</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Educational Qualification Card -->
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div class="profile-card-title-group">
+              <div class="profile-card-icon"><i class="fas fa-graduation-cap"></i></div>
+              <div class="profile-card-title">Educational Qualification</div>
+            </div>
+            <button class="profile-btn-outline" id="edit-profile-btn" onclick="toggleEditMode(this)">
+              <i class="fas fa-edit"></i> Edit Profile
+            </button>
+          </div>
+
+          <table class="edu-table" id="eduTableBody">
+            <thead>
+              <tr>
+                <th><i class="fas fa-book-open"></i> Degree</th>
+                <th><i class="far fa-building"></i> Institution</th>
+                <th><i class="far fa-calendar-alt"></i> Year Of Passing</th>
+                <th><i class="fas fa-chart-pie"></i> Percentage / CGPA</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="edu-val" id="val-edu-1-deg">SSC (10th)</td>
+                <td class="edu-val" id="val-edu-1-inst"></td>
+                <td class="edu-val" id="val-10th-year-of-pass"></td>
+                <td class="edu-val" id="val-edu-1-cgpa"></td>
+              </tr>
+              <tr>
+                <td class="edu-val" id="val-edu-2-deg">Intermediate</td>
+                <td class="edu-val" id="val-edu-2-inst"></td>
+                <td class="edu-val" id="val-inter-year-of-pass"></td>
+                <td class="edu-val" id="val-edu-2-cgpa"></td>
+              </tr>
+              <tr>
+                <td class="edu-val" id="val-edu-3-deg">B.Tech (CSE)</td>
+                <td class="edu-val" id="val-edu-3-inst"></td>
+                <td class="edu-val" id="val-btech-year-of-pass"></td>
+                <td class="edu-val" id="val-edu-3-cgpa"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleDropdown() {
+      document.getElementById("userDropdown").classList.toggle("show");
+    }
+
+    window.addEventListener('click', function (e) {
+      if (!document.querySelector('.nav-user-dropdown-container').contains(e.target)) {
+        let dropdown = document.getElementById('userDropdown');
+        if (dropdown) dropdown.classList.remove('show');
+      }
+    });
+
+    // Power Automate Backend Integration
+    const BACKEND_URL = "/api/powerautomate";
+
+    // Load data on page load
+    window.onload = fetchProfileData;
+
+    async function fetchProfileData() {
+      try {
+        const userEmail = localStorage.getItem("userEmail") || "";
+        if (!userEmail) return; // Don't fetch if no email
+
+        const response = await fetch(BACKEND_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "getProfile", payload: { email: userEmail } })
+        });
+
+        let data = await response.json();
+
+        // Handle array response from Power Automate's "Get items"
+        if (Array.isArray(data)) {
+          if (data.length === 0) {
+            console.log("No profile found for this email.");
+            return;
+          }
+          data = data[0]; // Take the first matching record
+        }
+
+        // Normalize SharePoint column names to UI element IDs
+        const normalized = { ...data };
+        if (data.Name) { normalized.name = data.Name; }
+        if (data.Role || data.Designation) { normalized.role = data.Role || data.Designation; }
+        if (data.Phone) { normalized['val-mobile'] = data.Phone; }
+        if (data.Email) { normalized['val-email'] = data.Email; }
+        if (data.EmpID) { normalized['prof-staff-code'] = data.EmpID; }
+        if (data.Department) { normalized.department = data.Department; }
+        if (data.College) { normalized.college = data.College; }
+        data = normalized;
+
+        // Map the backend data to your HTML elements
+        if (data.name) {
+          document.getElementById('sidebar-name').innerText = data.name;
+          document.getElementById('main-name').innerText = data.name;
+        }
+        if (data.role) document.getElementById('main-role').innerText = data.role;
+        if (data.college) document.getElementById('main-college').innerText = data.college;
+
+        if (data['val-dob']) document.getElementById('val-dob').innerText = data['val-dob'];
+        if (data['val-aadhaar']) document.getElementById('val-aadhaar').innerText = data['val-aadhaar'];
+        if (data['val-pin']) document.getElementById('val-pin').innerText = data['val-pin'];
+        if (data['val-dno']) document.getElementById('val-dno').innerText = data['val-dno'];
+        if (data['val-street']) document.getElementById('val-street').innerText = data['val-street'];
+        if (data['val-city']) document.getElementById('val-city').innerText = data['val-city'];
+        if (data['val-mobile']) document.getElementById('val-mobile').innerText = data['val-mobile'];
+        if (data['val-email']) document.getElementById('val-email').innerText = data['val-email'];
+
+        // Education mapping
+        const loadEduRow = (num) => {
+          if (data[`val-edu-${num}-deg`]) document.getElementById(`val-edu-${num}-deg`).innerText = data[`val-edu-${num}-deg`];
+
+          let cgpaVal = data[`val-edu-${num}-cgpa`];
+          let instVal = data[`val-edu-${num}-inst`];
+
+          // Auto-migrate legacy data: if Percentage/CGPA was accidentally stored in the Institution field
+          if (!cgpaVal && instVal && (instVal.includes('%') || instVal.toUpperCase().includes('CGPA') || !isNaN(parseFloat(instVal)))) {
+            cgpaVal = instVal;
+            instVal = ""; // Clear institution since it was holding cgpa data
+          }
+
+          if (cgpaVal) document.getElementById(`val-edu-${num}-cgpa`).innerText = cgpaVal;
+          if (instVal) document.getElementById(`val-edu-${num}-inst`).innerText = instVal;
+        };
+
+        loadEduRow(1);
+        loadEduRow(2);
+        loadEduRow(3);
+
+        if (data['val-10th-year-of-pass']) document.getElementById('val-10th-year-of-pass').innerText = data['val-10th-year-of-pass'];
+        if (data['val-inter-year-of-pass']) document.getElementById('val-inter-year-of-pass').innerText = data['val-inter-year-of-pass'];
+        if (data['val-btech-year-of-pass']) document.getElementById('val-btech-year-of-pass').innerText = data['val-btech-year-of-pass'];
+      } catch (error) {
+        console.error("Error fetching data from Power Automate:", error);
+      }
+    }
+
+    async function saveProfileData(payload) {
+      try {
+        const response = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: "postProfile", payload: payload })
+        });
+        if (response.ok) {
+          alert("Data saved successfully to Power Automate!");
+        } else {
+          alert("Failed to save data.");
+        }
+      } catch (error) {
+        console.error("Error saving to Power Automate:", error);
+        alert("Error connecting to backend.");
+      }
+    }
+
+    // Toggle Edit Mode Logic for Profile
+    function toggleEditMode(button) {
+      const isEditing = button.innerText.includes('Save');
+      const valueCells = document.querySelectorAll('.profile-val');
+      const eduCells = document.querySelectorAll('#eduTableBody .edu-val');
+
+      if (!isEditing) {
+        // Switch to Edit Mode
+        button.innerHTML = '<i class="fas fa-save"></i> Save Profile';
+        button.style.background = '#0d9298';
+        button.style.color = '#fff';
+
+        // Convert info table to inputs
+        valueCells.forEach(td => {
+          const text = td.innerText.trim();
+          td.innerHTML = `<input type="text" value="${text}">`;
+        });
+
+        // Convert edu table to inputs
+        eduCells.forEach(td => {
+          const text = td.innerText.trim();
+          td.innerHTML = `<input type="text" value="${text}">`;
+        });
+
+      } else {
+        // Save Mode (Send to Power Automate Backend)
+        button.innerHTML = '<i class="fas fa-edit"></i> Edit Profile';
+        button.style.background = 'transparent';
+        button.style.color = 'var(--primary)';
+
+        // Prepare Payload object for Power Automate (Flat structure)
+        const payload = {};
+
+        // Extract values from inputs
+        valueCells.forEach(td => {
+          const input = td.querySelector('input');
+          if (input) {
+            td.innerText = input.value;
+            payload[td.id] = input.value;
+          }
+        });
+
+        eduCells.forEach(td => {
+          const input = td.querySelector('input');
+          if (input) {
+            td.innerText = input.value;
+            payload[td.id] = input.value;
+          }
+        });
+
+        // Add name, role, college to payload
+        payload.name = document.getElementById('main-name').innerText;
+        payload.role = document.getElementById('main-role').innerText;
+        payload.college = document.getElementById('main-college').innerText;
+
+        console.log("Data ready for Power Automate:", payload);
+
+        // Actually send data to Power Automate
+        saveProfileData(payload);
+      }
+    }
+  </script>
+</body>
+
+</html>

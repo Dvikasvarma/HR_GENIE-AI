@@ -1,0 +1,7 @@
+node_modules/
+.env
+*.env
+users_dataset.csv
+hrms.db
+*.db
+

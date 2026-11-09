@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>My Policy - HRMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0d9298;
+      --primary-hover: #0a6b6e;
+      --sidebar-bg: #0d1e27;
+      --sidebar-hover: #122533;
+      --sidebar-active: #0d9298;
+      --bg-color: #f4f6f8;
+      --card-bg: #ffffff;
+      --text-main: #333333;
+      --text-label: #0a6b6e;
+      --border-color: #e5e7eb;
+      --topbar-bg: #ffffff;
+      --accent-bright: #0d9298;
+      --accent-ultra: rgba(13, 146, 152, 0.06);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Top Bar */
+    nav {
+      height: 60px;
+      background-color: var(--topbar-bg);
+      display: flex;
+      align-items: center;
+      padding: 0 30px;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 20;
+      flex-shrink: 0;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--sidebar-bg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo-mark {
+      width: 30px;
+      height: 30px;
+      background: var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-logo-mark i {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .nav-logo-text span {
+      color: var(--primary);
+    }
+
+    /* Layout */
+    .app-body {
+      display: flex;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: var(--sidebar-bg);
+      color: #94a3b8;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      flex-shrink: 0;
+      z-index: 10;
+      background-image: radial-gradient(circle at 20% 90%, rgba(13, 146, 152, 0.05) 0%, transparent 50%);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary);
+      opacity: 0.8;
+    }
+
+    .nav-list {
+      list-style: none;
+      flex-grow: 1;
+    }
+
+    .nav-item {
+      padding: 14px 25px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 14px;
+      color: #94a3b8;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      text-decoration: none;
+      gap: 12px;
+    }
+
+    .nav-item:hover {
+      background-color: var(--sidebar-hover);
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background-color: var(--sidebar-active);
+      color: #fff;
+    }
+
+    /* Main Content */
+    .main-wrapper {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .content-area {
+      padding: 30px 40px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .page-header {
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-title h1 {
+      font-size: 24px;
+      color: #1e293b;
+      font-weight: 700;
+    }
+
+    .header-title p {
+      font-size: 14px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .search-container {
+      position: relative;
+      width: 300px;
+    }
+
+    .search-container input {
+      width: 100%;
+      padding: 10px 15px 10px 40px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      outline: none;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .search-container input:focus {
+      border-color: var(--primary);
+    }
+
+    .search-container i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+    }
+
+    /* Policy Grid */
+    .policy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .policy-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .policy-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      border-color: var(--primary);
+    }
+
+    .policy-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--accent-ultra);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--primary);
+    }
+
+    .policy-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .policy-card p {
+      font-size: 14px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    .policy-meta {
+      margin-top: auto;
+      padding-top: 15px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .btn-view {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 25, 35, 0.8);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #fff;
+      width: 100%;
+      max-width: 800px;
+      max-height: 90vh;
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-header {
+      padding: 25px 30px;
+      background: var(--sidebar-bg);
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 20px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .btn-close {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .btn-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-body {
+      padding: 40px;
+      overflow-y: auto;
+      line-height: 1.8;
+      color: #334155;
+    }
+
+    .modal-body h4 {
+      margin: 25px 0 10px;
+      color: #1e293b;
+      font-size: 16px;
+    }
+
+    .modal-body ul {
+      margin-left: 20px;
+      margin-bottom: 15px;
+    }
+
+    .modal-body li {
+      margin-bottom: 8px;
+    }
+
+    .modal-footer {
+      padding: 20px 30px;
+      background: #f8fafc;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-download {
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-left">
+      <a href="hrms_self_details-page.html" class="nav-logo">
+        <div class="nav-logo-mark"><i class="fas fa-layer-group"></i></div>
+        <span class="nav-logo-text">HRMS <span>Portal</span></span>
+      </a>
+    </div>
+    <div class="nav-right">
+      <div id="user-display" style="font-size: 14px; font-weight: 600; color: var(--sidebar-bg);"></div>
+    </div>
+  </nav>
+
+  <div class="app-body">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">Categories</div>
+      <ul class="nav-list">
+        <li><a href="#" class="nav-item active" onclick="filterPolicies('all')"><i class="fas fa-th-large"></i> All Policies</a></li>
+        <li><a href="#" class="nav-item" onclick="filterPolicies('employment')"><i class="fas fa-user-tie"></i> Employment</a></li>
+        <li><a href="#" class="nav-item" onclick="filterPolicies('leave')"><i class="fas fa-calendar-check"></i> Leave & Attendance</a></li>
+        <li><a href="#" class="nav-item" onclick="filterPolicies('conduct')"><i class="fas fa-gavel"></i> Code of Conduct</a></li>
+        <li><a href="#" class="nav-item" onclick="filterPolicies('benefits')"><i class="fas fa-heart"></i> Benefits</a></li>
+        <li><a href="hrms_self_details-page.html" class="nav-item" style="margin-top: 20px;"><i class="fas fa-arrow-left"></i> Back to Home</a></li>
+      </ul>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <div class="content-area">
+        <div class="page-header">
+          <div class="header-title">
+            <h1>Employee Policies</h1>
+            <p>Guidelines and regulations for our workforce.</p>
+          </div>
+          <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="policySearch" placeholder="Search policies..." onkeyup="searchPolicies()">
+          </div>
+        </div>
+
+        <div class="policy-grid" id="policyGrid">
+          <!-- Policy Cards will be injected here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Policy Modal -->
+  <div class="modal" id="policyModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Policy Title</h2>
+        <button class="btn-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Content injected by JS -->
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn-download" onclick="alert('Downloading PDF...')"><i class="fas fa-file-pdf"></i> Download PDF</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const policies = [
+      {
+        id: 1,
+        category: 'leave',
+        icon: 'fa-calendar-alt',
+        title: 'Leave Policy',
+        desc: 'Guidelines for Casual, Sick, and Earned leaves including application procedures.',
+        content: `
+          <h4>1. Overview</h4>
+          <p>This policy outlines the leave entitlements and procedures for all permanent employees. The company provides various types of leaves to support work-life balance and handle emergencies.</p>
+          <h4>2. Types of Leave</h4>
+          <ul>
+            <li><strong>Casual Leave (CL):</strong> 12 days per year. Intended for short-term personal needs.</li>
+            <li><strong>Sick Leave (SL):</strong> 5 days per year. For medical reasons (doctor note required for >2 days).</li>
+            <li><strong>Earned Leave (EL):</strong> Accrued at 1.5 days per month of service.</li>
+          </ul>
+          <h4>3. Application Procedure</h4>
+          <p>Employees must apply for leave via the HRMS Portal at least 2 days in advance for CL and 1 week for EL. Sick leave can be updated on the day of absence.</p>
+        `,
+        updated: 'Mar 2024'
+      },
+      {
+        id: 2,
+        category: 'conduct',
+        icon: 'fa-shield-alt',
+        title: 'Code of Conduct',
+        desc: 'Professional behavior expectations, ethics, and workplace decorum standards.',
+        content: `
+          <h4>1. Professionalism</h4>
+          <p>Employees are expected to maintain a high standard of professionalism, integrity, and respect toward colleagues, clients, and partners.</p>
+          <h4>2. Workplace Decorum</h4>
+          <p>Maintaining a clean workspace and adhering to the office hours (9:00 AM - 6:00 PM) is essential for productivity.</p>
+          <h4>3. Conflict of Interest</h4>
+          <p>Employees must avoid any activity that creates a conflict between their personal interests and the interests of the company.</p>
+        `,
+        updated: 'Jan 2024'
+      },
+      {
+        id: 3,
+        category: 'employment',
+        icon: 'fa-user-check',
+        title: 'Onboarding Policy',
+        desc: 'Step-by-step guide for new joiners regarding documentation and induction.',
+        content: `
+          <h4>1. Documentation</h4>
+          <p>New employees must submit all required documents (ID proof, education certificates, experience letters) within 3 days of joining.</p>
+          <h4>2. Induction Program</h4>
+          <p>A mandatory 2-day induction program is conducted to familiarize joiners with company culture and processes.</p>
+        `,
+        updated: 'Feb 2024'
+      },
+      {
+        id: 4,
+        category: 'benefits',
+        icon: 'fa-heartbeat',
+        title: 'Health Insurance',
+        desc: 'Details regarding group medical insurance coverage for employees and families.',
+        content: `
+          <h4>1. Coverage</h4>
+          <p>All permanent employees are covered under the Group Medical Insurance scheme with a sum insured of ₹5,00,000.</p>
+          <h4>2. Dependents</h4>
+          <p>Coverage includes spouse and up to 2 children. Parents can be added with a co-payment option.</p>
+        `,
+        updated: 'Apr 2024'
+      },
+      {
+        id: 5,
+        category: 'employment',
+        icon: 'fa-laptop-code',
+        title: 'IT & Asset Policy',
+        desc: 'Rules for using company-provided laptops, software, and data security protocols.',
+        content: `
+          <h4>1. Asset Responsibility</h4>
+          <p>Employees are responsible for the physical security and proper maintenance of assets assigned to them (Laptops, Monitors, etc.).</p>
+          <h4>2. Data Security</h4>
+          <p>Confidential data must not be shared outside the organization. Use of personal storage devices is prohibited.</p>
+        `,
+        updated: 'Dec 2023'
+      },
+      {
+        id: 6,
+        category: 'conduct',
+        icon: 'fa-ban',
+        title: 'Anti-Harassment',
+        desc: 'Zero-tolerance policy towards harassment and the grievance redressal mechanism.',
+        content: `
+          <h4>1. Zero Tolerance</h4>
+          <p>The company maintains a zero-tolerance policy towards any form of harassment, including sexual, verbal, or physical harassment.</p>
+          <h4>2. Reporting</h4>
+          <p>Incidents can be reported directly to HR or via the anonymous whistleblower portal.</p>
+        `,
+        updated: 'Jan 2024'
+      }
+    ];
+
+    function renderPolicies(data) {
+      const grid = document.getElementById('policyGrid');
+      grid.innerHTML = data.map(p => `
+        <div class="policy-card" onclick="openModal(${p.id})">
+          <div class="policy-icon"><i class="fas ${p.icon}"></i></div>
+          <h3>${p.title}</h3>
+          <p>${p.desc}</p>
+          <div class="policy-meta">
+            <span>Last Updated: ${p.updated}</span>
+            <span class="btn-view">Read More <i class="fas fa-chevron-right"></i></span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function searchPolicies() {
+      const term = document.getElementById('policySearch').value.toLowerCase();
+      const filtered = policies.filter(p => 
+        p.title.toLowerCase().includes(term) || 
+        p.desc.toLowerCase().includes(term)
+      );
+      renderPolicies(filtered);
+    }
+
+    function filterPolicies(cat) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      if (cat === 'all') {
+        renderPolicies(policies);
+      } else {
+        const filtered = policies.filter(p => p.category === cat);
+        renderPolicies(filtered);
+      }
+    }
+
+    function openModal(id) {
+      const policy = policies.find(p => p.id === id);
+      document.getElementById('modalTitle').innerText = policy.title;
+      document.getElementById('modalBody').innerHTML = policy.content;
+      document.getElementById('policyModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('policyModal').classList.remove('show');
+    }
+
+    // Initialize
+    window.onload = () => {
+      renderPolicies(policies);
+      const userEmail = localStorage.getItem("userEmail");
+      if (userEmail) {
+        document.getElementById('user-display').innerText = userEmail.split('@')[0];
+      }
+    };
+  </script>
+</body>
+
+</html>

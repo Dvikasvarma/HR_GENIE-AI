@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HRMS Portal — Terms of Use</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#0e1a22;--ink-mid:#3d5060;--ink-light:#8699a8;--accent:#0a6b6e;--accent-bright:#0d9298;--accent-glow:rgba(13,146,152,0.12);--accent-ultra:rgba(13,146,152,0.06);--white:#ffffff;--off:#f7f9fb;--border:#e2eaef;--panel:#0d1e27}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--ink);overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 5%;height:68px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(0,0,0,0.055);box-shadow:0 4px 24px rgba(14,26,34,0.07)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-mark{width:34px;height:34px;background:linear-gradient(135deg,#0d9298,#0a6b6e);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.nav-logo-mark i{font-size:14px;color:#fff}
+.nav-logo-text{font-family:'Instrument Serif',Georgia,serif;font-size:20px;color:var(--ink);letter-spacing:-0.02em}
+.nav-logo-text span{color:var(--accent-bright)}
+.nav-links{display:flex;align-items:center;gap:8px}
+.nav-link{display:flex;align-items:center;gap:7px;padding:8px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-weight:500;color:var(--ink-light);text-decoration:none;transition:border-color .2s,color .2s,background .2s}
+.nav-link:hover{border-color:var(--accent-bright);color:var(--accent-bright);background:var(--accent-ultra)}
+.nav-link i{font-size:11px}
+.hero{padding:110px 5% 70px;background:var(--panel);text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 50%,rgba(13,146,152,0.1) 0%,transparent 50%),radial-gradient(circle at 80% 50%,rgba(13,146,152,0.06) 0%,transparent 50%);pointer-events:none}
+.hero::after{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(-45deg,rgba(255,255,255,0.016) 0px,rgba(255,255,255,0.016) 1px,transparent 1px,transparent 28px);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(13,146,152,0.12);border:1px solid rgba(13,146,152,0.28);border-radius:100px;padding:6px 16px 6px 10px;margin-bottom:24px;position:relative;z-index:1}
+.badge-dot{width:22px;height:22px;border-radius:50%;background:var(--accent-glow);display:flex;align-items:center;justify-content:center}
+.badge-dot i{font-size:9px;color:var(--accent-bright)}
+.hero-badge span{font-size:12px;font-weight:600;color:var(--accent-bright);letter-spacing:.04em}
+.hero h1{font-family:'Instrument Serif',Georgia,serif;font-size:clamp(32px,5vw,52px);font-weight:400;color:#fff;line-height:1.15;letter-spacing:-0.025em;margin-bottom:16px;position:relative;z-index:1}
+.hero h1 em{font-style:italic;color:var(--accent-bright)}
+.hero p{font-size:14px;color:rgba(255,255,255,0.35);position:relative;z-index:1}
+.layout{max-width:1100px;margin:0 auto;padding:48px 5%;display:grid;grid-template-columns:230px 1fr;gap:48px;align-items:start}
+.sidebar{position:sticky;top:90px}
+.sidebar-title{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:10px}
+.sidebar-nav{list-style:none}
+.sidebar-nav li{margin-bottom:2px}
+.sidebar-nav a{display:block;padding:8px 12px;border-radius:10px;font-size:13px;color:var(--ink-light);text-decoration:none;border-left:2px solid transparent;transition:background .2s,color .2s,border-color .2s}
+.sidebar-nav a:hover{background:var(--off);color:var(--ink-mid)}
+.sidebar-nav a.active{background:var(--accent-ultra);color:var(--accent);border-left-color:var(--accent-bright);font-weight:500}
+.sidebar-meta{margin-top:20px;padding:14px;background:var(--off);border-radius:12px;border:1px solid var(--border)}
+.sidebar-meta strong{font-size:11px;color:var(--ink-mid);display:block;margin-bottom:3px}
+.sidebar-meta p{font-size:12px;color:var(--ink-light)}
+.section{background:var(--white);border-radius:20px;border:1px solid var(--border);padding:32px;margin-bottom:20px;scroll-margin-top:100px;transition:border-color .25s}
+.section:hover{border-color:rgba(13,146,152,0.25)}
+.section-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.section-icon{width:42px;height:42px;border-radius:12px;flex-shrink:0;background:var(--accent-ultra);border:1px solid rgba(13,146,152,0.2);display:flex;align-items:center;justify-content:center}
+.section-icon i{font-size:16px;color:var(--accent-bright)}
+.section-num{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-bright)}
+.section h2{font-family:'Instrument Serif',Georgia,serif;font-size:20px;font-weight:400;color:var(--ink);letter-spacing:-0.015em;margin-top:3px}
+.section p{font-size:14px;color:var(--ink-mid);margin-bottom:14px;line-height:1.8;font-weight:300}
+.section p:last-child{margin-bottom:0}
+.section ul{padding-left:20px;margin-bottom:14px}
+.section li{font-size:14px;color:var(--ink-mid);margin-bottom:8px;line-height:1.75;font-weight:300}
+.highlight-box{border-radius:12px;padding:16px 18px;margin:16px 0;display:flex;gap:12px;align-items:flex-start}
+.highlight-box p{font-size:13.5px;margin:0;line-height:1.65;font-weight:400}
+.highlight-box i{font-size:14px;margin-top:2px;flex-shrink:0}
+.hb-warn{background:rgba(234,179,8,0.06);border:1px solid rgba(234,179,8,0.25)}
+.hb-warn i{color:#ca8a04}
+.hb-warn p{color:var(--ink-mid)}
+.hb-danger{background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2)}
+.hb-danger i{color:#ef4444}
+.hb-danger p{color:var(--ink-mid)}
+.hb-info{background:var(--accent-ultra);border:1px solid rgba(13,146,152,0.2)}
+.hb-info i{color:var(--accent-bright)}
+.hb-info p{color:var(--ink-mid)}
+.contact-card{background:linear-gradient(145deg,#0d1e27,#0a2e32);border-radius:20px;padding:32px;margin-top:8px;text-align:center;position:relative;overflow:hidden}
+.contact-card::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(13,146,152,0.15) 0%,transparent 65%);right:-60px;top:-60px;pointer-events:none}
+.contact-card h3{font-family:'Instrument Serif',Georgia,serif;font-size:22px;font-weight:400;color:#fff;margin-bottom:8px;position:relative;z-index:1}
+.contact-card p{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:22px;position:relative;z-index:1;font-weight:300}
+.contact-methods{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.contact-method{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 16px;font-size:13px;color:rgba(255,255,255,0.55);text-decoration:none;transition:background .2s,border-color .2s,color .2s}
+.contact-method:hover{background:rgba(13,146,152,0.15);border-color:rgba(13,146,152,0.4);color:var(--accent-bright)}
+.contact-method i{font-size:12px;color:var(--accent-bright)}
+footer{background:var(--ink);padding:40px 5% 28px;margin-top:60px}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.footer-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.footer-brand-name{font-family:'Instrument Serif',Georgia,serif;font-size:18px;color:#fff}
+.footer-brand-name span{color:var(--accent-bright)}
+.footer-links{display:flex;gap:24px;list-style:none}
+.footer-links a{font-size:12.5px;color:rgba(255,255,255,0.35);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:rgba(255,255,255,0.7)}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.22)}
+@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{position:static}.footer-inner{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="hrms_landing_page.html" class="nav-logo">
+    <div class="nav-logo-mark"><i class="fas fa-layer-group"></i></div>
+    <span class="nav-logo-text">HRMS <span>Portal</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="hrms_privacy.html" class="nav-link"><i class="fas fa-lock"></i> Privacy Policy</a>
+    <a href="hrms_landing_page.html" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Login</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge"><div class="badge-dot"><i class="fas fa-file-contract"></i></div><span>Legal & Compliance</span></div>
+  <h1><em>Terms</em> of Use</h1>
+  <p>Last updated: March 22, 2026 &nbsp;·&nbsp; Effective immediately</p>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <p class="sidebar-title">On this page</p>
+    <ul class="sidebar-nav">
+      <li><a href="#t1">1. Acceptance of Terms</a></li>
+      <li><a href="#t2">2. Authorised Use</a></li>
+      <li><a href="#t3">3. Prohibited Activities</a></li>
+      <li><a href="#t4">4. Account Responsibility</a></li>
+      <li><a href="#t5">5. System Availability</a></li>
+      <li><a href="#t6">6. Intellectual Property</a></li>
+      <li><a href="#t7">7. Limitation of Liability</a></li>
+      <li><a href="#t8">8. Governing Law</a></li>
+    </ul>
+    <div class="sidebar-meta"><strong>Effective Date</strong><p>March 22, 2026</p></div>
+  </aside>
+
+  <div>
+    <div class="section" id="t1">
+      <div class="section-header"><div class="section-icon"><i class="fas fa-file-contract"></i></div><div><div class="section-num">Section 1</div><h2>Acceptance of Terms</h2></div></div>
+      <p>By logging into and using the <strong>HRMS Portal</strong>, you agree to be fully bound by these Terms of Use. These terms apply to all users including HR Administrators and Employees.</p>
+      <div class="highlight-box hb-warn"><i class="fas fa-exclamation-triangle"></i><p>If you do not agree to these terms, you must not use the HRMS system. Unauthorised access or misuse may result in immediate account suspension and disciplinary action.</p></div>
+    </div>
+
+    <div class="section" id="t2">
+      <div class="section-header"><div class="section-icon"><i class="fas fa-user-shield"></i></div><div><div class="section-num">Section 2</div><h2>Authorised Use</h2></div></div>
+      <p>HRMS Portal is provided exclusively for authorised employees and HR personnel. Permitted uses include:</p>
+      <ul>
+        <li>Viewing and updating your own employee profile and personal details</li>
+        <li>Applying for leave and tracking leave request status</li>
+        <li>Viewing payslips, salary history, and payroll information</li>
+        <li><strong>HR Admins only:</strong> Managing employee records, payroll, and attendance</li>
+        <li>Generating and downloading reports relevant to your assigned role</li>
+      </ul>
+    </div>
+
+    <div class="section" id="t3">
+      <div class="section-header"><div class="section-icon"><i class="fas fa-ban"></i></div><div><div class="section-num">Section 3</div><h2>Prohibited Activities</h2></div></div>
+      <p>The following activities are strictly prohibited:</p>
+      <ul>
+        <li>Accessing another employee's account or data without authorisation</li>
+        <li>Attempting to bypass, hack, or exploit the login or authentication system</li>
+        <li>Sharing your login credentials with any other person</li>
+        <li>Downloading or copying sensitive employee data for personal use</li>
+        <li>Using the system outside your official job responsibilities</li>
+        <li>Introducing malware, viruses, or malicious scripts into the system</li>
+        <li>Misrepresenting your identity or impersonating another user</li>
+      </ul>
+      <div class="highlight-box hb-danger"><i class="fas fa-gavel"></i><p>Violation may result in <strong>immediate account suspension</strong>, disciplinary action, and/or civil or criminal legal proceedings.</p></div>
+    </div>
+
+    <div class="section" id="t4">
+      <div class="section-header"><div class="section-icon"><i class="fas fa-key"></i></div><div><div class="section-num">Section 4</div><h2>Account Responsibility</h2></div></div>
+      <p>You are fully responsible for maintaining the confidentiality and security of your account credentials:</p>
+      <ul>
+        <li>Keep your password confidential — never share it with colleagues</li>
+        <li>Log out after each session, especially on shared or public devices</li>
+        <li>Immediately report any suspected unauthorised access to your HR Administrator</li>
+        <li>Choose a strong password and change it periodically</li>
+      </ul>
+      <p>The organisation shall not be liable for any loss arising from your failure to maintain account security.</p>
+    </div>
+
+    <div class="section" id="t5">
+      <div class="section-header"><div class="section-icon"><i class="fas fa-server"></i></div><div><div class="section-num">Section 5</div><h2>System Availability</h2></div></div>
+      <p>We strive to maintain high availability, however we do not guarantee uninterrupted access. The system may be unavailable due to:</p>
+      <ul>
+        <li>Scheduled maintenance, updates, or security patches</li>
+        <li>Unexpected technical issues or server downtime</li>
+        <li>Internet connectivity disruptions beyond our control</li>
+        <li>Force majeure events including natural disasters</li>
+      </ul>
+      <p>We will notify users in advance of planned maintenance wherever possible.</p>
+    </div>
+
+    <div class="section" id="t6">
+      <div class="section-header"><div class="section-icon"><i class="fas fa-balance-scale"></i></div><div><div class="section-num">Section 6</div><h2>Intellectual Property</h2></div></div>
+      <p>All content, design, and functionality of the HRMS Portal is the intellectual property of the organisation:</p>
+      <ul>
+        <li>You may not copy, reproduce, or distribute any part of the system</li>
+        <li>You may not reverse-engineer or attempt to extract source code</li>
+        <li>All reports and data generated remain the property of the organisation</li>
+        <li>Unauthorised use of intellectual property may result in legal action</li>
+      </ul>
+    </div>
+
+    <div class="section" id="t7">
+      <div class="section-header"><div class="section-icon"><i class="fas fa-exclamation-circle"></i></div><div><div class="section-num">Section 7</div><h2>Limitation of Liability</h2></div></div>
+      <p>To the maximum extent permitted by law, the organisation shall not be liable for:</p>
+      <ul>
+        <li>Indirect, incidental, or consequential damages arising from system use</li>
+        <li>Loss of data due to technical failures beyond our reasonable control</li>
+        <li>Errors caused by incorrect user input</li>
+        <li>Service disruptions caused by third-party providers (Microsoft SharePoint, Power Automate)</li>
+      </ul>
+    </div>
+
+    <div class="section" id="t8">
+      <div class="section-header"><div class="section-icon"><i class="fas fa-map-marker-alt"></i></div><div><div class="section-num">Section 8</div><h2>Governing Law</h2></div></div>
+      <p>These Terms of Use are governed by the laws of the <strong>Republic of India</strong>. Any disputes shall be subject to the exclusive jurisdiction of courts in <strong>Andhra Pradesh, India</strong>.</p>
+      <p>These terms are effective as of <strong>March 22, 2026</strong> and supersede all previous agreements relating to the use of the HRMS system.</p>
+    </div>
+
+    <div class="contact-card">
+      <h3>Questions about these <em style="font-style:italic;color:var(--accent-bright)">terms?</em></h3>
+      <p>Contact your HR Administrator or the HRMS support team</p>
+      <div class="contact-methods">
+        <a href="mailto:hr@company.com" class="contact-method"><i class="fas fa-envelope"></i> hr@company.com</a>
+        <a href="hrms_support.html" class="contact-method"><i class="fas fa-headset"></i> Support Centre</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <a href="hrms_landing_page.html" class="footer-brand"><div class="nav-logo-mark"><i class="fas fa-layer-group"></i></div><span class="footer-brand-name">HRMS <span>Portal</span></span></a>
+    <ul class="footer-links">
+      <li><a href="hrms_privacy.html">Privacy Policy</a></li>
+      <li><a href="hrms_terms_of_use.html">Terms of Use</a></li>
+      <li><a href="hrms_support.html">Support</a></li>
+      <li><a href="hrms_Api_docs.html">API Docs</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 HRMS Portal. All rights reserved.</p>
+  </div>
+</footer>
+<script>
+window.addEventListener('scroll',()=>{
+  const ids=['t1','t2','t3','t4','t5','t6','t7','t8'];
+  let active='t1';
+  ids.forEach(id=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<200)active=id;});
+  document.querySelectorAll('.sidebar-nav a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+active));
+});
+</script>
+</body>
+</html>
