@@ -287,6 +287,23 @@
       letter-spacing: -0.01em;
     }
 
+    .pd-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #22d3ee;
+      background: rgba(34, 211, 238, 0.08);
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-top: 10px;
+      border: 1px solid rgba(34, 211, 238, 0.2);
+    }
+
+    .pd-status i {
+      font-size: 10px;
+    }
+
     /* Dashboard Grid */
     .dashboard-grid {
       display: flex;
@@ -716,6 +733,9 @@
             id="profile-dept">...</span></div>
         <div class="pd-row"><span class="pd-label">Asset ID :</span> <span class="pd-val" id="profile-asset">...</span>
         </div>
+        <div id="sync-status" class="pd-status" style="display: none;">
+          <i class="fas fa-check-circle"></i> Synced with SharePoint
+        </div>
       </div>
     </div>
 
@@ -779,40 +799,9 @@
     </div>
   </div>
 
-  <!-- AI Chatbot -->
-  <div class="chatbot-wrapper">
-    <div class="chatbot-window" id="chatbotWindow">
-      <div class="chatbot-header">
-        <div class="chatbot-header-title">
-          <i class="fas fa-brain"></i> Smart AI HRMS
-        </div>
-        <button class="chatbot-close" onclick="toggleChatbot()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <div class="chatbot-messages" id="chatbotMessages">
-        <div class="chat-msg bot"></div>
-
-        <div class="chat-chips">
-          <button class="chat-chip" onclick="sendQuickReply('Apply for Leave')">Apply for Leave</button>
-          <button class="chat-chip" onclick="sendQuickReply('Check Leave Status')">Check Leave Status</button>
-          <button class="chat-chip" onclick="sendQuickReply('View HR Policies')">View HR Policies</button>
-        </div>
-      </div>
-
-      <div class="chatbot-input-area">
-        <input type="text" id="chatbotInput" placeholder="Type your message..." onkeypress="handleChatKeyPress(event)">
-        <button class="chatbot-send-btn" onclick="sendChatMessage()">
-          <i class="fas fa-paper-plane"></i>
-        </button>
-      </div>
-    </div>
-
-    <button class="chatbot-toggle-btn" id="chatbotToggleBtn" onclick="toggleChatbot()">
-      <i class="fas fa-robot"></i>
-    </button>
-  </div>
+  <!-- Standardized AI Chatbot -->
+  <link rel="stylesheet" href="chatbot.css">
+  <script src="chatbot.js"></script>
 
   <script>
     function toggleDropdown() {
@@ -843,20 +832,30 @@
         fetch(backendUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "loginAuth", payload: { email: userEmail } })
+          body: JSON.stringify({ action: "getProfile", payload: { email: userEmail } })
         })
           .then(res => res.json())
           .then(data => {
-            // We assume your Power Automate returns JSON like:
-            // { "status": "success", "staffCode": "5517", "name": "Y.Veera Vasantharao", "department": "T-HUB", "assetId": "3" }
+            // Handle array response from Power Automate's "Get items"
+            if (Array.isArray(data)) {
+              if (data.length === 0) {
+                console.error("No profile found for this email.");
+                return;
+              }
+              data = data[0]; // Take the first matching record
+            }
 
-            if (data.status === "success") {
-              document.getElementById("profile-code").textContent = data.staffCode || "N/A";
-              document.getElementById("profile-name").textContent = data.name || "N/A";
-              document.getElementById("profile-dept").textContent = data.department || "N/A";
-              document.getElementById("profile-asset").textContent = data.assetId || "N/A";
-            } else {
-              console.error("Could not fetch profile from SharePoint.");
+            // Map SharePoint field names to profile elements
+            document.getElementById("profile-code").textContent = data.EmpID || data.staffCode || "N/A";
+            document.getElementById("profile-name").textContent = data.Name || data.name || "N/A";
+            document.getElementById("profile-dept").textContent = data.Department || data.department || "N/A";
+            document.getElementById("profile-asset").textContent = data.assetId || data.AssetId || "N/A";
+            document.getElementById("sync-status").style.display = "inline-flex";
+
+            // Initialize chatbot with user name
+            const userName = data.Name || data.name || "User";
+            if (typeof initChatBot === "function") {
+              initChatBot(userName);
             }
           })
           .catch(err => {
@@ -865,114 +864,6 @@
       }
     });
 
-    // Chatbot Logic
-    function toggleChatbot() {
-      const win = document.getElementById("chatbotWindow");
-      const icon = document.querySelector("#chatbotToggleBtn i");
-      win.classList.toggle("open");
-      if (win.classList.contains("open")) {
-        icon.classList.remove("fa-comment-dots");
-        icon.classList.add("fa-times");
-      } else {
-        icon.classList.remove("fa-times");
-        icon.classList.add("fa-comment-dots");
-      }
-    }
-
-    function sendQuickReply(text) {
-      document.getElementById("chatbotInput").value = text;
-      sendChatMessage();
-    }
-
-    function handleChatKeyPress(event) {
-      if (event.key === 'Enter') {
-        sendChatMessage();
-      }
-    }
-
-    async function sendChatMessage() {
-      const input = document.getElementById("chatbotInput");
-      const msgText = input.value.trim();
-      if (!msgText) return;
-
-      const messagesContainer = document.getElementById("chatbotMessages");
-
-      // Add user message
-      const userDiv = document.createElement("div");
-      userDiv.className = "chat-msg user";
-      userDiv.innerText = msgText;
-      messagesContainer.appendChild(userDiv);
-
-      input.value = "";
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-      // Add loading state
-      const loadingDiv = document.createElement("div");
-      loadingDiv.className = "chat-msg bot";
-      loadingDiv.innerText = "Typing...";
-      loadingDiv.id = "chat-loading";
-      messagesContainer.appendChild(loadingDiv);
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-      try {
-        const API_URL = "/api/chat";
-
-        let userName = "there";
-        const nameEl = document.getElementById("profile-name");
-        if (nameEl && nameEl.textContent !== "...") {
-          userName = nameEl.textContent.split(" ")[0];
-        }
-
-        const prompt = `You are a smart, empathetic, ego-free HR Assistant for our company. 
-        Guidelines:
-        1. Empathy: Treat the user (${userName}) like a friend. Any reason for leave (movie, vacation, rest) is valid and approved without judgment.
-        2. Leaves: They have 12 Casual Leaves and 5 Sick Leaves. If they ask to apply, tell them it's approved and ask them to apply in the 'My Track' tab.
-        3. Other queries: Guide salary/pay to 'My Finance', policies to 'My Policy', office/desk to 'My Campus'.
-        4. Tone: Very short (1-2 sentences), sweet, and helpful. Do not use markdown like ** or ## in your response, use simple text.
-        
-        User Question: ${msgText}`;
-
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  { text: prompt }
-                ]
-              }
-            ]
-          })
-        });
-
-        const data = await response.json();
-
-        document.getElementById("chat-loading").remove();
-
-        const botDiv = document.createElement("div");
-        botDiv.className = "chat-msg bot";
-
-        if (data.candidates && data.candidates.length > 0) {
-          botDiv.innerText = data.candidates[0].content.parts[0].text;
-        } else if (data.error && data.error.message) {
-          botDiv.innerText = "API Error: " + data.error.message;
-        } else {
-          botDiv.innerText = "I'm sorry, I couldn't process that request right now.";
-        }
-
-        messagesContainer.appendChild(botDiv);
-      } catch (error) {
-        document.getElementById("chat-loading").remove();
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "chat-msg bot";
-        errorDiv.innerText = "Sorry, error connecting to Gemini AI.";
-        messagesContainer.appendChild(errorDiv);
-        console.error("Gemini API Error:", error);
-      }
-
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
   </script>
 </body>
 

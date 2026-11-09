@@ -586,7 +586,7 @@
           <i class="fas fa-user"></i>
         </div>
         <div class="profile-name" id="sidebar-name">Loading...</div>
-        <div class="profile-role-sub">Staff</div>
+        <div class="profile-role-sub" id="sidebar-role">Staff</div>
         <!-- <div class="profile-status"><div class="status-dot"></div> Online</div> -->
       </div>
       <ul class="nav-list">
@@ -623,8 +623,8 @@
             </div>
             <div class="user-intro-details">
               <h2 id="main-name">Loading...</h2>
-              <div class="role" id="main-role">Data Spelist</div>
-              <div class="college" id="main-college">ACET</div>
+              <div class="role" id="main-role">—</div>
+              <div class="college" id="main-college">—</div>
             </div>
           </div>
 
@@ -770,7 +770,14 @@
     async function fetchProfileData() {
       try {
         const userEmail = localStorage.getItem("userEmail") || "";
-        if (!userEmail) return; // Don't fetch if no email
+        if (!userEmail) {
+          document.getElementById('sidebar-name').innerText = "Not Logged In";
+          document.getElementById('main-name').innerText = "Please Login";
+          return;
+        }
+
+        // Immediately show the email while loading
+        document.getElementById('val-email').innerText = userEmail;
 
         const response = await fetch(BACKEND_URL, {
           method: "POST",
@@ -784,11 +791,23 @@
         if (Array.isArray(data)) {
           if (data.length === 0) {
             console.log("No profile found for this email.");
+            document.getElementById('sidebar-name').innerText = userEmail.split('@')[0];
+            document.getElementById('main-name').innerText = userEmail.split('@')[0];
             return;
           }
           data = data[0]; // Take the first matching record
         }
 
+        // Normalize SharePoint column names to UI element IDs
+        const normalized = { ...data };
+        if (data.Name) { normalized.name = data.Name; }
+        if (data.Role || data.Designation) { normalized.role = data.Role || data.Designation; }
+        if (data.Phone) { normalized['val-mobile'] = data.Phone; }
+        if (data.Email) { normalized['val-email'] = data.Email; }
+        if (data.EmpID) { normalized['prof-staff-code'] = data.EmpID; }
+        if (data.Department) { normalized.department = data.Department; }
+        if (data.College) { normalized.college = data.College; }
+        data = normalized;
 
         // Map the backend data to your HTML elements
         if (data.name) {
@@ -833,6 +852,12 @@
         if (data['val-btech-year-of-pass']) document.getElementById('val-btech-year-of-pass').innerText = data['val-btech-year-of-pass'];
       } catch (error) {
         console.error("Error fetching data from Power Automate:", error);
+        const userEmail = localStorage.getItem("userEmail") || "";
+        if (userEmail) {
+          document.getElementById('sidebar-name').innerText = userEmail.split('@')[0];
+          document.getElementById('main-name').innerText = userEmail.split('@')[0];
+          document.getElementById('val-email').innerText = userEmail;
+        }
       }
     }
 

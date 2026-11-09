@@ -27,26 +27,27 @@ export default async function handler(req, res) {
   }
 
   const fetchOptions = {
-    headers: {}
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
   };
 
-  if (action === 'getProfile') {
-    if (payload?.email) targetUrl += `&email=${encodeURIComponent(payload.email)}`;
-    fetchOptions.method = 'GET';
-  } else if (action === 'getAttendance') {
-    if (payload?.month && payload?.email) {
-      targetUrl += `&month=${encodeURIComponent(payload.month)}&email=${encodeURIComponent(payload.email)}`;
-    }
-    fetchOptions.method = 'POST';
-  } else {
-    // loginAuth, postProfile, postLeave, getLeave all use POST with JSON body
-    fetchOptions.method = 'POST';
-    fetchOptions.headers['Content-Type'] = 'application/json';
-    if (payload) fetchOptions.body = JSON.stringify(payload);
+  if (action === 'getProfile' && payload?.email) {
+    targetUrl += `&email=${encodeURIComponent(payload.email)}`;
+  } else if (action === 'getAttendance' && payload?.month && payload?.email) {
+    targetUrl += `&month=${encodeURIComponent(payload.month)}&email=${encodeURIComponent(payload.email)}`;
+  }
+
+  if (payload) {
+    fetchOptions.body = JSON.stringify(payload);
   }
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    fetchOptions.signal = controller.signal;
+
     const response = await fetch(targetUrl, fetchOptions);
+    clearTimeout(timeoutId);
 
     const responseText = await response.text();
     let data = {};
@@ -57,10 +58,10 @@ export default async function handler(req, res) {
         data = { message: responseText };
       }
     }
-    
     return res.status(200).json(data);
   } catch (error) {
     console.error(`Error proxying ${action}:`, error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    const msg = error.name === 'AbortError' ? 'Timeout' : error.message;
+    return res.status(500).json({ error: 'Proxy Error: ' + msg });
   }
 }

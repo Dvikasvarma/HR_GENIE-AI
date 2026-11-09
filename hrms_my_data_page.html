@@ -1514,6 +1514,18 @@
           data = data[0];
         }
 
+        // Normalize SharePoint column names to UI element IDs
+        const normalized = { ...data };
+        if (data.Name) { normalized.name = data.Name; normalized['prof-name'] = data.Name; }
+        if (data.Role || data.Designation) { normalized.role = data.Role || data.Designation; normalized['prof-desig'] = data.Role || data.Designation; }
+        if (data.Phone) { normalized['prof-mobile'] = data.Phone; normalized['val-mobile'] = data.Phone; }
+        if (data.Email) { normalized['prof-email'] = data.Email; normalized['val-email'] = data.Email; }
+        if (data.EmpID) { normalized['prof-staff-code'] = data.EmpID; }
+        if (data.Department) { normalized['prof-dept'] = data.Department; }
+        if (data.College) { normalized.college = data.College; normalized['prof-college'] = data.College; }
+        if (data.Status) { normalized.status = data.Status; }
+        data = normalized;
+
         document.getElementById('sidebar-profile-name').innerText = data.name || "Guest User";
 
         const allElements = document.querySelectorAll('.d-value, .profile-val, input');

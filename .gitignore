@@ -5,3 +5,4 @@ users_dataset.csv
 hrms.db
 *.db
 
+.vscode/
