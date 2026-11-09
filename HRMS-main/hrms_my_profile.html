@@ -585,8 +585,8 @@
         <div class="avatar-circle">
           <i class="fas fa-user"></i>
         </div>
-        <div class="profile-name" id="sidebar-name">Nikesh Kumar</div>
-        <div class="profile-role-sub">Staff</div>
+        <div class="profile-name" id="sidebar-name">Loading...</div>
+        <div class="profile-role-sub" id="sidebar-role">Staff</div>
         <!-- <div class="profile-status"><div class="status-dot"></div> Online</div> -->
       </div>
       <ul class="nav-list">
@@ -622,9 +622,9 @@
               <i class="fas fa-user"></i>
             </div>
             <div class="user-intro-details">
-              <h2 id="main-name">Nikesh Kumar</h2>
-              <div class="role" id="main-role">Data Spelist</div>
-              <div class="college" id="main-college">ACET</div>
+              <h2 id="main-name">Loading...</h2>
+              <div class="role" id="main-role">—</div>
+              <div class="college" id="main-college">—</div>
             </div>
           </div>
 
@@ -636,7 +636,7 @@
                   <div class="mini-icon"><i class="far fa-calendar-alt"></i></div>
                   Date Of Birth
                 </div>
-                <div class="profile-val" id="val-dob">13-08-2005</div>
+                <div class="profile-val" id="val-dob">—</div>
               </div>
 
               <div class="profile-info-row">
@@ -644,7 +644,7 @@
                   <div class="mini-icon"><i class="fas fa-map-pin"></i></div>
                   PinNo
                 </div>
-                <div class="profile-val" id="val-pin">521175</div>
+                <div class="profile-val" id="val-pin">—</div>
               </div>
 
               <div class="profile-info-row">
@@ -652,7 +652,7 @@
                   <div class="mini-icon"><i class="fas fa-map-marker-alt"></i></div>
                   Street
                 </div>
-                <div class="profile-val" id="val-street">markayandeya bazar</div>
+                <div class="profile-val" id="val-street">—</div>
               </div>
 
               <div class="profile-info-row">
@@ -660,7 +660,7 @@
                   <div class="mini-icon"><i class="fas fa-phone-alt"></i></div>
                   Mobile No
                 </div>
-                <div class="profile-val" id="val-mobile">9391647391</div>
+                <div class="profile-val" id="val-mobile">—</div>
               </div>
             </div>
 
@@ -671,7 +671,7 @@
                   <div class="mini-icon"><i class="far fa-id-card"></i></div>
                   Aadhaar No
                 </div>
-                <div class="profile-val" id="val-aadhaar">12345678912</div>
+                <div class="profile-val" id="val-aadhaar">—</div>
               </div>
 
               <div class="profile-info-row">
@@ -679,7 +679,7 @@
                   <div class="mini-icon"><i class="fas fa-home"></i></div>
                   D No
                 </div>
-                <div class="profile-val" id="val-dno">1-275</div>
+                <div class="profile-val" id="val-dno">—</div>
               </div>
 
               <div class="profile-info-row">
@@ -687,7 +687,7 @@
                   <div class="mini-icon"><i class="fas fa-city"></i></div>
                   City
                 </div>
-                <div class="profile-val" id="val-city">Jaggayyapeta</div>
+                <div class="profile-val" id="val-city">—</div>
               </div>
 
               <div class="profile-info-row">
@@ -695,7 +695,7 @@
                   <div class="mini-icon"><i class="far fa-envelope"></i></div>
                   Email Id
                 </div>
-                <div class="profile-val" id="val-email">nikeshkumar@gmail.com</div>
+                <div class="profile-val" id="val-email">—</div>
               </div>
             </div>
           </div>
@@ -770,7 +770,14 @@
     async function fetchProfileData() {
       try {
         const userEmail = localStorage.getItem("userEmail") || "";
-        if (!userEmail) return; // Don't fetch if no email
+        if (!userEmail) {
+          document.getElementById('sidebar-name').innerText = "Not Logged In";
+          document.getElementById('main-name').innerText = "Please Login";
+          return;
+        }
+
+        // Immediately show the email while loading
+        document.getElementById('val-email').innerText = userEmail;
 
         const response = await fetch(BACKEND_URL, {
           method: "POST",
@@ -784,6 +791,8 @@
         if (Array.isArray(data)) {
           if (data.length === 0) {
             console.log("No profile found for this email.");
+            document.getElementById('sidebar-name').innerText = userEmail.split('@')[0];
+            document.getElementById('main-name').innerText = userEmail.split('@')[0];
             return;
           }
           data = data[0]; // Take the first matching record
@@ -843,6 +852,12 @@
         if (data['val-btech-year-of-pass']) document.getElementById('val-btech-year-of-pass').innerText = data['val-btech-year-of-pass'];
       } catch (error) {
         console.error("Error fetching data from Power Automate:", error);
+        const userEmail = localStorage.getItem("userEmail") || "";
+        if (userEmail) {
+          document.getElementById('sidebar-name').innerText = userEmail.split('@')[0];
+          document.getElementById('main-name').innerText = userEmail.split('@')[0];
+          document.getElementById('val-email').innerText = userEmail;
+        }
       }
     }
 
