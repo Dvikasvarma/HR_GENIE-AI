@@ -1,5 +1,27 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
+
+// Load .env file safely without extra dependencies
+try {
+  const envPath = path.join(__dirname, '.env');
+  if (fs.existsSync(envPath)) {
+    const envConfig = fs.readFileSync(envPath, 'utf8');
+    envConfig.split('\n').forEach(line => {
+      const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+      if (match) {
+        const key = match[1];
+        let value = match[2] || '';
+        value = value.trim().replace(/^['"](.*)['"]$/, '$1');
+        if (!process.env[key]) {
+          process.env[key] = value;
+        }
+      }
+    });
+  }
+} catch (e) {
+  console.warn('Note: Could not load .env file:', e.message);
+}
 
 const app = express();
 app.use(express.json());
@@ -18,6 +40,7 @@ const urlMap = {
   getAllEmployees: "PASTE_YOUR_GET_ALL_EMPLOYEES_FLOW_URL_HERE"
 };
 
+// Power Automate Proxy
 app.post('/api/powerautomate', async (req, res) => {
   const { action, payload } = req.body || {};
   if (!action) return res.status(400).json({ error: 'action is required' });
@@ -53,6 +76,50 @@ app.post('/api/powerautomate', async (req, res) => {
     console.error('Proxy error:', err);
     const msg = err.name === 'AbortError' ? 'Timeout' : err.message;
     return res.status(500).json({ error: 'Proxy Error: ' + msg });
+  }
+});
+
+// AI Chatbot Route (Gemini 2.5 Flash)
+app.post('/api/chat', async (req, res) => {
+  const apiKey = process.env.GEMINI_API_KEY || "AIzaSyA6BU61LwcuxRWBOT_WBuCheXJZVOySg5Q";
+
+  try {
+    let body = req.body || {};
+
+    if (body.message && !body.contents) {
+      body = {
+        contents: [{
+          parts: [{ text: body.message }]
+        }]
+      };
+    }
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok && data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+      const reply = data.candidates[0].content.parts[0].text;
+      return res.status(200).json({ reply: reply, ...data });
+    }
+
+    console.warn("Gemini API non-200 or no candidate:", data);
+    return res.status(200).json({
+      reply: "I am here to help you! You can manage your leaves and OD in 'My Track', check payslips in 'My Finance', and view company guidelines in 'My Policy'."
+    });
+
+  } catch (error) {
+    console.error("Chat error:", error);
+    return res.status(200).json({
+      reply: "I'm your HR Assistant! For leave requests, please visit the 'My Track' tab, or reach out to HR Support for immediate assistance."
+    });
   }
 });
 

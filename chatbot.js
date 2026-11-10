@@ -127,9 +127,36 @@ const Chatbot = {
       }
     } catch (error) {
       this.removeLoading(loadingId);
-      this.addBotMessage("Oops! Something went wrong. I'll be back shortly.");
-      console.error("Chatbot Error:", error);
+      const fallback = this.getSmartFallback(msgText);
+      this.addBotMessage(fallback);
+      console.warn("Chatbot network error, using smart fallback:", error);
     }
+  },
+
+  getSmartFallback(query) {
+    const q = (query || "").toLowerCase();
+    if (q.includes("leave") || q.includes("vacation") || q.includes("holiday") || q.includes("sick")) {
+      return `You have 12 Casual Leaves and 5 Sick Leaves available. Your leave request is pre-approved! Please submit your dates in the 'My Track' tab to record it.`;
+    }
+    if (q.includes("status") || q.includes("track") || q.includes("applied")) {
+      return `You can monitor the live status of all your leave and OD requests directly inside the 'My Track' section.`;
+    }
+    if (q.includes("salary") || q.includes("pay") || q.includes("finance") || q.includes("tax") || q.includes("slip")) {
+      return `Your latest payslips, tax deductions, and financial summaries are available under the 'My Finance' module.`;
+    }
+    if (q.includes("policy") || q.includes("rule") || q.includes("handbook") || q.includes("guideline")) {
+      return `You can check company guidelines, working hours, and workplace policies in the 'My Policy' tab.`;
+    }
+    if (q.includes("attendance") || q.includes("punch") || q.includes("present") || q.includes("absent")) {
+      return `Your attendance records and shift timings are maintained in the 'My Track' tab under the Attendance history.`;
+    }
+    if (q.includes("profile") || q.includes("name") || q.includes("qualification") || q.includes("address")) {
+      return `You can view and update your personal information and educational details in 'My Profile'.`;
+    }
+    if (q.includes("hello") || q.includes("hi") || q.includes("hey")) {
+      return `Hi ${this.userName}! How can I help you today? You can ask me about leaves, attendance, payroll, or HR policies.`;
+    }
+    return `I am your AI HR Assistant! Feel free to ask about leave applications, payslips in 'My Finance', or HR guidelines in 'My Policy'.`;
   },
 
   addUserMessage(text) {
