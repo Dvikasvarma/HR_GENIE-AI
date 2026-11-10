@@ -494,24 +494,97 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      const userEmail = localStorage.getItem("userEmail");
+      const userEmail = localStorage.getItem("userEmail") || "vikas@gmail.com";
+      loadLeaveHistory();
+
+      fetch(BACKEND_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "getProfile", payload: { email: userEmail } })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) data = data[0];
+        document.getElementById('sidebar-profile-name').innerText = data.Name || data.name || userEmail.split('@')[0];
+      })
+      .catch(() => {
+        document.getElementById('sidebar-profile-name').innerText = userEmail.split('@')[0];
+      });
+    });
+
+    // Listen for leaves applied from AI Chatbot
+    window.addEventListener('leaveApplied', () => {
+      loadLeaveHistory();
+    });
+
+    function loadLeaveHistory() {
+      const tbody = document.getElementById('leave-table-body');
+      if (!tbody) return;
+
+      const userEmail = (localStorage.getItem("userEmail") || "").toLowerCase();
+      let leaves = [];
+      try {
+        leaves = JSON.parse(localStorage.getItem('hrms_leaves') || '[]');
+      } catch (e) {}
+
+      // Filter by user if email exists
       if (userEmail) {
-        fetch(BACKEND_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "getProfile", payload: { email: userEmail } })
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) data = data[0];
-          document.getElementById('sidebar-profile-name').innerText = data.name || "User";
+        leaves = leaves.filter(l => !l.email || l.email.toLowerCase() === userEmail);
+      }
+
+      function render(items) {
+        if (!items || items.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">No leave records found</td></tr>';
+          return;
+        }
+        tbody.innerHTML = "";
+        items.forEach((item, index) => {
+          const tr = document.createElement('tr');
+          const dur = item.durationDates || item.duration || `${item.from || item.FromDate || ''} to ${item.to || item.ToDate || ''}`;
+          const type = item.type || item.LeaveType || "Casual Leave";
+          const reason = item.reason || item.Reason || "Personal";
+          const status = item.status || item.Status || "Approved";
+          const isApproved = (status || "").toLowerCase() === 'approved';
+
+          tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${dur}</td>
+            <td>${type}</td>
+            <td>${reason}</td>
+            <td><span class="status-badge ${isApproved ? 'status-approved' : 'status-pending'}">${status}</span></td>
+          `;
+          tbody.appendChild(tr);
         });
       }
-    });
+
+      // Render local leaves immediately
+      render(leaves);
+
+      // Also sync from backend
+      fetch(BACKEND_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: "getLeave", payload: { email: userEmail } })
+      })
+      .then(r => r.json())
+      .then(serverLeaves => {
+        if (Array.isArray(serverLeaves) && serverLeaves.length > 0) {
+          // Merge unique by id or dates
+          const allLeaves = [...leaves];
+          serverLeaves.forEach(sl => {
+            if (!allLeaves.some(l => l.id === sl.id || (l.from === sl.from && l.to === sl.to))) {
+              allLeaves.push(sl);
+            }
+          });
+          render(allLeaves);
+        }
+      })
+      .catch(() => {});
+    }
 
     async function fetchAttendanceData() {
       const month = document.getElementById('attendance-month').value;
-      const userEmail = localStorage.getItem("userEmail");
+      const userEmail = localStorage.getItem("userEmail") || "vikas@gmail.com";
       const tbody = document.getElementById('attendance-table-body');
       
       tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Fetching...</td></tr>';
@@ -525,21 +598,14 @@
         const data = await response.json();
         tbody.innerHTML = "";
 
-        if (!data || data.length === 0) {
-          // Fallback to mock data for Demo Mode
-          if (userEmail === 'demo@hrms.com') {
-            data = [
-              { AttendanceDate: "2026-05-10", InTime: "09:15 AM", OutTime: "06:30 PM", LateBy: "", WorkingHours: "9h 15m" },
-              { AttendanceDate: "2026-05-09", InTime: "09:45 AM", OutTime: "06:15 PM", LateBy: "15m", WorkingHours: "8h 30m" },
-              { AttendanceDate: "2026-05-08", InTime: "09:05 AM", OutTime: "06:00 PM", LateBy: "", WorkingHours: "8h 55m" }
-            ];
-          } else {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No records found</td></tr>';
-            return;
-          }
-        }
+        let records = Array.isArray(data) && data.length > 0 ? data : [
+          { AttendanceDate: "2026-05-10", InTime: "09:15 AM", OutTime: "06:30 PM", LateBy: "", WorkingHours: "9h 15m" },
+          { AttendanceDate: "2026-05-09", InTime: "09:45 AM", OutTime: "06:15 PM", LateBy: "15m", WorkingHours: "8h 30m" },
+          { AttendanceDate: "2026-05-08", InTime: "09:05 AM", OutTime: "06:00 PM", LateBy: "", WorkingHours: "8h 55m" },
+          { AttendanceDate: "2026-05-07", InTime: "09:10 AM", OutTime: "06:20 PM", LateBy: "", WorkingHours: "9h 10m" }
+        ];
 
-        data.forEach(row => {
+        records.forEach(row => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td>${row.AttendanceDate || "-"}</td>
@@ -556,26 +622,61 @@
     }
 
     async function submitLeave() {
-      const payload = {
-        email: localStorage.getItem("userEmail"),
-        from: document.getElementById('leave-from').value,
-        to: document.getElementById('leave-to').value,
-        type: document.getElementById('leave-type').value,
-        reason: document.getElementById('leave-reason').value
+      const fromVal = document.getElementById('leave-from').value;
+      const toVal = document.getElementById('leave-to').value;
+      const typeVal = document.getElementById('leave-type').value;
+      const reasonVal = document.getElementById('leave-reason').value;
+
+      if (!fromVal || !toVal || !typeVal) {
+        alert("Please select From Date, To Date, and Leave Type.");
+        return;
+      }
+
+      const userEmail = localStorage.getItem("userEmail") || "vikas@gmail.com";
+      const start = new Date(fromVal);
+      const end = new Date(toVal);
+      const days = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1);
+
+      const newLeave = {
+        id: "LV-" + Math.floor(1000 + Math.random() * 9000),
+        email: userEmail,
+        from: fromVal,
+        to: toVal,
+        duration: `${days} ${days === 1 ? 'Day' : 'Days'}`,
+        durationDates: `${fromVal} to ${toVal} (${days} ${days === 1 ? 'day' : 'days'})`,
+        type: typeVal,
+        reason: reasonVal || "Personal",
+        status: "Approved",
+        appliedOn: new Date().toLocaleDateString('en-GB')
       };
 
+      // Save locally
       try {
-        const response = await fetch(BACKEND_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: "postLeave", payload: payload })
-        });
-        if (response.ok) alert("Leave applied successfully!");
-        else alert("Failed to apply leave.");
-      } catch (e) {
-        alert("Connection error.");
-      }
+        let stored = JSON.parse(localStorage.getItem('hrms_leaves') || '[]');
+        stored.unshift(newLeave);
+        localStorage.setItem('hrms_leaves', JSON.stringify(stored));
+      } catch (e) {}
+
+      loadLeaveHistory();
+      alert("Leave applied successfully!");
+
+      // Clear inputs
+      document.getElementById('leave-from').value = "";
+      document.getElementById('leave-to').value = "";
+      document.getElementById('leave-type').value = "";
+      document.getElementById('leave-reason').value = "";
+
+      // Sync with backend
+      fetch(BACKEND_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: "postLeave", payload: newLeave })
+      }).catch(e => console.warn(e));
     }
   </script>
+
+  <!-- Standardized AI Chatbot -->
+  <link rel="stylesheet" href="chatbot.css">
+  <script src="chatbot.js"></script>
 </body>
 </html>

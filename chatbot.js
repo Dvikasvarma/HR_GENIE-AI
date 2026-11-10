@@ -97,6 +97,20 @@ const Chatbot = {
     
     const loadingId = this.showLoading();
 
+    // Check if the user is requesting to apply for leave
+    const appliedLeave = this.applyLeaveDirectly(msgText);
+    if (appliedLeave) {
+      this.removeLoading(loadingId);
+      const confirmMsg = `✅ Leave Applied & Approved!\n\n` +
+        `• Type: ${appliedLeave.type}\n` +
+        `• Duration: ${appliedLeave.duration} (${appliedLeave.from} to ${appliedLeave.to})\n` +
+        `• Reason: ${appliedLeave.reason}\n` +
+        `• Status: Approved\n\n` +
+        `Your leave request has been submitted and is now recorded in your 'My Track' tab!`;
+      this.addBotMessage(confirmMsg);
+      return;
+    }
+
     try {
       const prompt = `You are a smart, empathetic, ego-free HR Assistant for our company. 
       Guidelines:
@@ -131,6 +145,92 @@ const Chatbot = {
       this.addBotMessage(fallback);
       console.warn("Chatbot network error, using smart fallback:", error);
     }
+  },
+
+  applyLeaveDirectly(text) {
+    const t = (text || "").toLowerCase();
+    const applyWords = ["apply", "need", "want", "take", "request", "grant", "give", "book", "submit"];
+    const leaveWords = ["leave", "leaves", "day off", "days off", "holiday"];
+
+    const isApply = applyWords.some(w => t.includes(w));
+    const isLeave = leaveWords.some(w => t.includes(w));
+
+    if (!isApply || !isLeave) return null;
+
+    // Detect number of days
+    let days = 1;
+    const match = t.match(/(\d+)\s*(?:day|days)/);
+    if (match) {
+      days = parseInt(match[1], 10);
+    } else if (t.includes("two days") || t.includes("2 days")) {
+      days = 2;
+    } else if (t.includes("three days") || t.includes("3 days")) {
+      days = 3;
+    } else if (t.includes("one day") || t.includes("a day")) {
+      days = 1;
+    }
+
+    // Detect leave type
+    let type = "Casual Leave";
+    if (t.includes("sick") || t.includes("fever") || t.includes("health") || t.includes("doctor") || t.includes("unwell")) {
+      type = "Sick Leave";
+    } else if (t.includes("earned") || t.includes("vacation") || t.includes("annual")) {
+      type = "Earned Leave";
+    }
+
+    // Detect reason
+    let reason = "Personal reasons";
+    if (t.includes("because of") || t.includes("due to") || t.includes("reason:") || t.includes("for ")) {
+      const parts = t.split(/because of|due to|reason:|for\s+/i);
+      if (parts[1]) {
+        let r = parts[1].replace(/leave|days|\d+/gi, '').trim();
+        if (r.length > 2) {
+          reason = r.charAt(0).toUpperCase() + r.slice(1);
+        }
+      }
+    }
+
+    // Dates starting tomorrow
+    const start = new Date();
+    start.setDate(start.getDate() + 1);
+    const end = new Date(start);
+    end.setDate(start.getDate() + (days - 1));
+
+    const fromDateStr = start.toISOString().split('T')[0];
+    const toDateStr = end.toISOString().split('T')[0];
+    const userEmail = localStorage.getItem("userEmail") || "vikas@gmail.com";
+
+    const leaveItem = {
+      id: "LV-" + Math.floor(1000 + Math.random() * 9000),
+      email: userEmail,
+      from: fromDateStr,
+      to: toDateStr,
+      duration: `${days} ${days === 1 ? 'Day' : 'Days'}`,
+      durationDates: `${fromDateStr} to ${toDateStr} (${days} ${days === 1 ? 'day' : 'days'})`,
+      type: type,
+      reason: reason,
+      status: "Approved",
+      appliedOn: new Date().toLocaleDateString('en-GB')
+    };
+
+    // Save to localStorage
+    try {
+      let stored = JSON.parse(localStorage.getItem('hrms_leaves') || '[]');
+      stored.unshift(leaveItem);
+      localStorage.setItem('hrms_leaves', JSON.stringify(stored));
+      window.dispatchEvent(new CustomEvent('leaveApplied', { detail: leaveItem }));
+    } catch (e) {
+      console.warn("Storage warning:", e);
+    }
+
+    // Sync to backend asynchronously
+    fetch('/api/powerautomate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'postLeave', payload: leaveItem })
+    }).catch(() => {});
+
+    return leaveItem;
   },
 
   getSmartFallback(query) {

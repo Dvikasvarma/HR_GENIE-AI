@@ -6,3 +6,4 @@ hrms.db
 *.db
 
 .vscode/
+leaves.json

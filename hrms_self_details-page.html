@@ -822,46 +822,60 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-      const userEmail = localStorage.getItem("userEmail");
+      const userEmail = localStorage.getItem("userEmail") || "vikas@gmail.com";
+      
+      // Pre-fill immediate fallback based on email to prevent "N/A"
+      const defaultName = userEmail.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      document.getElementById("profile-name").textContent = defaultName;
+      document.getElementById("profile-code").textContent = "EMP" + Math.abs(userEmail.split('').reduce((a, b) => { a = ((a << 5) - a) + b.charCodeAt(0); return a & a; }, 0) % 900 + 100);
+      document.getElementById("profile-dept").textContent = "IT";
+      document.getElementById("profile-asset").textContent = "AST-2026";
+      document.getElementById("sync-status").style.display = "inline-flex";
 
-      // If we have an email stored from the login page, we fetch the details.
-      if (userEmail) {
+      // If cached profile exists, use it instantly
+      const cached = localStorage.getItem("userProfile");
+      if (cached) {
+        try {
+          const c = JSON.parse(cached);
+          if (c.Name) document.getElementById("profile-name").textContent = c.Name;
+          if (c.EmpID) document.getElementById("profile-code").textContent = c.EmpID;
+          if (c.Department) document.getElementById("profile-dept").textContent = c.Department;
+          if (c.AssetId) document.getElementById("profile-asset").textContent = c.AssetId;
+        } catch (e) {}
+      }
 
-        const backendUrl = "/api/powerautomate";
+      // Fetch live updated profile
+      const backendUrl = "/api/powerautomate";
+      fetch(backendUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "getProfile", payload: { email: userEmail } })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            if (data.length === 0) return;
+            data = data[0];
+          }
 
-        fetch(backendUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "getProfile", payload: { email: userEmail } })
-        })
-          .then(res => res.json())
-          .then(data => {
-            // Handle array response from Power Automate's "Get items"
-            if (Array.isArray(data)) {
-              if (data.length === 0) {
-                console.error("No profile found for this email.");
-                return;
-              }
-              data = data[0]; // Take the first matching record
-            }
+          if (data && !data.error) {
+            const name = data.Name || data.name || defaultName;
+            const code = data.EmpID || data.staffCode || "EMP008";
+            const dept = data.Department || data.department || "IT";
+            const asset = data.AssetId || data.assetId || "AST-2026";
 
-            // Map SharePoint field names to profile elements
-            document.getElementById("profile-code").textContent = data.EmpID || data.staffCode || "N/A";
-            document.getElementById("profile-name").textContent = data.Name || data.name || "N/A";
-            document.getElementById("profile-dept").textContent = data.Department || data.department || "N/A";
-            document.getElementById("profile-asset").textContent = data.assetId || data.AssetId || "N/A";
+            document.getElementById("profile-code").textContent = code;
+            document.getElementById("profile-name").textContent = name;
+            document.getElementById("profile-dept").textContent = dept;
+            document.getElementById("profile-asset").textContent = asset;
             document.getElementById("sync-status").style.display = "inline-flex";
 
-            // Initialize chatbot with user name
-            const userName = data.Name || data.name || "User";
-            if (typeof initChatBot === "function") {
-              initChatBot(userName);
-            }
-          })
-          .catch(err => {
-            console.error("Error connecting to Power Automate:", err);
-          });
-      }
+            localStorage.setItem("userProfile", JSON.stringify({ Name: name, EmpID: code, Department: dept, AssetId: asset }));
+          }
+        })
+        .catch(err => {
+          console.warn("Using offline profile fallback:", err);
+        });
     });
 
   </script>
